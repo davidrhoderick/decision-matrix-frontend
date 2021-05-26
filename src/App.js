@@ -1,9 +1,10 @@
-import { css, Global } from "@emotion/react"
+import {css, Global} from '@emotion/react'
+import styled from '@emotion/styled'
 
 import {useSelector, useDispatch} from 'react-redux'
-import { incrementFactor } from "./decisionsFactorsSlice"
-import { addDecision, removeDecision } from "./decisionsSlice"
-import { addFactor, removeFactor } from "./factorsSlice"
+import {incrementFactor} from './decisionsFactorsSlice'
+import {addDecision, removeDecision} from './decisionsSlice'
+import {addFactor, removeFactor} from './factorsSlice'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -31,26 +32,53 @@ const App = () => {
 
     <h1>Decision Matrix</h1>
 
-    <table>
+    <StyledTable>
       <thead>
         <tr>
           <th>Factors</th>
-          {decisions.map((decision, index) => <th key={index}>{decision} {decisions.length > 1 && <span onClick={() => dispatch(removeDecision(index))}>X</span>}</th>)}
+          {decisions.map((decision, index) => <th key={index}>{decision} {decisions.length > 1 && <Remove onClick={() => dispatch(removeDecision(index))} />}</th>)}
           <th onClick={() => dispatch(addDecision('new decision'))}>Add decision</th>
         </tr>
       </thead>
 
       <tbody>
         {factors.map((factor, factorIndex) => <tr key={factorIndex}>
-          <td>{factor} {factors.length > 1 && <span onClick={() => dispatch(removeFactor(factorIndex))}>X</span>}</td>
+          <td>{factor} {factors.length > 1 && <Remove onClick={() => dispatch(removeFactor(factorIndex))} />}</td>
           {decisionsFactors[factorIndex].map((decisionFactor, decisionIndex) => <td key={decisionIndex} onClick={() => dispatch(incrementFactor({factor: factorIndex, decision: decisionIndex}))}>{decisionFactor}</td>)}
         </tr>)}
         <tr>
           <td onClick={() => dispatch(addFactor('new factor'))}>Add factor</td>
         </tr>
       </tbody>
-    </table>
+    </StyledTable>
+
+    <StyledTable>
+      <tbody>
+        {decisions.map((decision, index) => <tr key={index}>
+          <th>{decision}</th>
+          <td>{decisionsFactors.reduce((sum, factor) => sum += factor[index], 0)}</td>
+        </tr>)}
+      </tbody>
+    </StyledTable>
   </div>
 }
 
 export default App
+
+const StyledTable = styled.table`
+  th, td {
+    padding: 0.5rem;
+  }
+`
+
+const Remove = styled.button`
+  outline: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  :after {
+    content: '\\00D7';
+    display: inline-block;
+  }
+`

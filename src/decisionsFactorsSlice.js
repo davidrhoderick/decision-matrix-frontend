@@ -17,13 +17,6 @@ export const decisionsFactorsSlice = createSlice({
       if(state.matrix[action.payload.factor][action.payload.decision] > 3) {
         state.matrix[action.payload.factor][action.payload.decision] = 0
       }
-    },
-    decrementFactor: (state, action) => {
-      state.matrix[action.payload.factor][action.payload.decision]--
-
-      if(state.matrix[action.payload.factor][action.payload.decision] < 0) {
-        state.matrix[action.payload.factor][action.payload.decision] = 3
-      }
     }
   },
   extraReducers: {
@@ -42,6 +35,6 @@ export const decisionsFactorsSlice = createSlice({
   }
 })
 
-export const {incrementFactor, decrementFactor} = decisionsFactorsSlice.actions
+export const {incrementFactor} = decisionsFactorsSlice.actions
 
 export default decisionsFactorsSlice.reducer
