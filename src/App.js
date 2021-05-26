@@ -4,8 +4,8 @@ import styled from '@emotion/styled'
 
 import {useSelector, useDispatch} from 'react-redux'
 import {incrementFactor} from './factorsChoicesSlice'
-import {addChoice, removeChoice} from './choicesSlice'
-import {addFactor, removeFactor} from './factorsSlice'
+import {addChoice, removeChoice, changeChoice} from './choicesSlice'
+import {addFactor, removeFactor, changeFactor} from './factorsSlice'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -36,13 +36,16 @@ const App = () => {
 
     <Title>Decision Matrix</Title>
 
-    <div>
+    <div style={{position: 'relative'}}>
+      <AxisTitle axis={'x'}>Choices</AxisTitle>
+      <AxisTitle axis={'y'}>Factors</AxisTitle>
+      
       <StyledTable>
         <thead>
           <tr>
-            <th>Factors</th>
-            {choices.map((choice, index) => <th key={index}>{choice} {choices.length > 1 && <Remove onClick={() => dispatch(removeChoice(index))} />}</th>)}
-            <th><StyledInput value={newChoice} onChange={(event) => setNewChoice(event.target.value)} placeholder="Add choice" /><Add onClick={() => {
+            <th></th>
+            {choices.map((choice, index) => <th key={index}><StyledInput value={choice} onChange={event => dispatch(changeChoice({name: event.target.value, index}))} /> {choices.length > 1 && <Remove onClick={() => dispatch(removeChoice(index))} />}</th>)}
+            <th><StyledInput value={newChoice} onChange={event => setNewChoice(event.target.value)} placeholder="Add choice" /><Add onClick={() => {
               if(newChoice.length > 0) {
                 dispatch(addChoice(newChoice))
                 setNewChoice('')
@@ -53,7 +56,7 @@ const App = () => {
 
         <tbody>
           {factors.map((factor, factorIndex) => <tr key={factorIndex}>
-            <td>{factor} {factors.length > 1 && <Remove onClick={() => dispatch(removeFactor(factorIndex))} />}</td>
+            <th><StyledInput value={factor} onChange={event => dispatch(changeFactor({name: event.target.value, index: factorIndex}))} /> {factors.length > 1 && <Remove onClick={() => dispatch(removeFactor(factorIndex))} />}</th>
             {factorsChoices[factorIndex].map((choiceFactor, choiceIndex) => <td key={choiceIndex} onClick={() => dispatch(incrementFactor({factor: factorIndex, choice: choiceIndex}))}>{choiceFactor}</td>)}
           </tr>)}
           <tr>
@@ -84,11 +87,21 @@ const App = () => {
 export default App
 
 const Title = styled.h1`
-  margin: 3rem 2rem 1rem;
+  margin: 3rem 2rem 2rem;
+`
+
+const AxisTitle = styled.h2`
+  margin: 1rem 2rem;
+
+  ${({axis}) => axis === 'y' ? `
+    transform: rotate(-90deg) translateX(-50%);
+    position: absolute;
+    margin: 0;
+  ` : `margin-left: 6rem;`}
 `
 
 const StyledTable = styled.table`
-  margin: 1rem 2rem;
+  margin: 1rem 2rem 1rem 4rem;
   border-collapse: collapse;
 
   th, td {
@@ -96,10 +109,6 @@ const StyledTable = styled.table`
     text-align: center;
     border: 1px solid #222;
     user-select: none;
-
-    &:first-of-type {
-      text-align: left;
-    }
   }
 
   td:not(:first-of-type) {

@@ -11,10 +11,13 @@ export const factorsSlice = createSlice({
     },
     removeFactor: (state, action) => {
       state.list = state.list.filter((factor, index) => action.payload !== index)
+    },
+    changeFactor: (state, action) => {
+      state.list[action.payload.index] = action.payload.name
     }
   }
 })
 
-export const {addFactor, removeFactor} = factorsSlice.actions
+export const {addFactor, removeFactor, changeFactor} = factorsSlice.actions
 
 export default factorsSlice.reducer
