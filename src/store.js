@@ -1,13 +1,13 @@
 import {configureStore} from '@reduxjs/toolkit'
 
-import decisions from './decisionsSlice'
+import choices from './choicesSlice'
 import factors from './factorsSlice'
-import decisionsFactors from './decisionsFactorsSlice'
+import factorsChoices from './factorsChoicesSlice'
 
 export default configureStore({
   reducer: {
-    decisions,
+    choices,
     factors,
-    decisionsFactors
+    factorsChoices
   }
 })

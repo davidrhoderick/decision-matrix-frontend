@@ -3,18 +3,18 @@ import {css, Global} from '@emotion/react'
 import styled from '@emotion/styled'
 
 import {useSelector, useDispatch} from 'react-redux'
-import {incrementFactor} from './decisionsFactorsSlice'
-import {addDecision, removeDecision} from './decisionsSlice'
+import {incrementFactor} from './factorsChoicesSlice'
+import {addChoice, removeChoice} from './choicesSlice'
 import {addFactor, removeFactor} from './factorsSlice'
 
 const App = () => {
   const dispatch = useDispatch()
 
-  const {list: decisions} = useSelector(state => state.decisions)
+  const {list: choices} = useSelector(state => state.choices)
   const {list: factors} = useSelector(state => state.factors)
-  const {matrix: decisionsFactors} = useSelector(state => state.decisionsFactors)
+  const {matrix: factorsChoices} = useSelector(state => state.factorsChoices)
 
-  const [newDecision, setNewDecision] = useState('')
+  const [newChoice, setNewChoice] = useState('')
   const [newFactor, setNewFactor] = useState('')
 
   return <div>
@@ -41,11 +41,11 @@ const App = () => {
         <thead>
           <tr>
             <th>Factors</th>
-            {decisions.map((decision, index) => <th key={index}>{decision} {decisions.length > 1 && <Remove onClick={() => dispatch(removeDecision(index))} />}</th>)}
-            <th><StyledInput value={newDecision} onChange={(event) => setNewDecision(event.target.value)} placeholder="Add decision" /><Add onClick={() => {
-              if(newDecision.length > 0) {
-                dispatch(addDecision(newDecision))
-                setNewDecision('')
+            {choices.map((choice, index) => <th key={index}>{choice} {choices.length > 1 && <Remove onClick={() => dispatch(removeChoice(index))} />}</th>)}
+            <th><StyledInput value={newChoice} onChange={(event) => setNewChoice(event.target.value)} placeholder="Add choice" /><Add onClick={() => {
+              if(newChoice.length > 0) {
+                dispatch(addChoice(newChoice))
+                setNewChoice('')
               }
             }}/></th>
           </tr>
@@ -54,7 +54,7 @@ const App = () => {
         <tbody>
           {factors.map((factor, factorIndex) => <tr key={factorIndex}>
             <td>{factor} {factors.length > 1 && <Remove onClick={() => dispatch(removeFactor(factorIndex))} />}</td>
-            {decisionsFactors[factorIndex].map((decisionFactor, decisionIndex) => <td key={decisionIndex} onClick={() => dispatch(incrementFactor({factor: factorIndex, decision: decisionIndex}))}>{decisionFactor}</td>)}
+            {factorsChoices[factorIndex].map((choiceFactor, choiceIndex) => <td key={choiceIndex} onClick={() => dispatch(incrementFactor({factor: factorIndex, choice: choiceIndex}))}>{choiceFactor}</td>)}
           </tr>)}
           <tr>
             <td><StyledInput value={newFactor} onChange={(event) => setNewFactor(event.target.value)} placeholder="Add factor" /><Add onClick={() => {
@@ -71,9 +71,9 @@ const App = () => {
     <div>
       <StyledTable>
         <tbody>
-          {decisions.map((decision, index) => <tr key={index}>
-            <th>{decision}</th>
-            <td>{decisionsFactors.reduce((sum, factor) => sum += factor[index], 0)}</td>
+          {choices.map((choice, index) => <tr key={index}>
+            <th>{choice}</th>
+            <td>{factorsChoices.reduce((sum, factor) => sum += factor[index], 0)}</td>
           </tr>)}
         </tbody>
       </StyledTable>
@@ -93,10 +93,9 @@ const StyledTable = styled.table`
 
   th, td {
     padding: 1rem;
-
     text-align: center;
-
     border: 1px solid #222;
+    user-select: none;
 
     &:first-of-type {
       text-align: left;
