@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {css, Global} from '@emotion/react'
 import styled from '@emotion/styled'
 
@@ -6,6 +6,8 @@ import {useSelector, useDispatch} from 'react-redux'
 import {incrementFactor} from './factorsChoicesSlice'
 import {addChoice, removeChoice, changeChoice} from './choicesSlice'
 import {addFactor, removeFactor, changeFactor} from './factorsSlice'
+
+import BarChart from './bar-chart'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -16,6 +18,42 @@ const App = () => {
 
   const [newChoice, setNewChoice] = useState('')
   const [newFactor, setNewFactor] = useState('')
+
+  const calculateTotals = () => choices.map((choice, index) => factorsChoices.reduce((totals, factor) => {
+    const min = totals[0]
+    const max = totals[1]
+
+    if(factor[index] < 0) {
+      return [
+        min,
+        max + 3
+      ]
+    } else {
+      return [
+        min + factor[index],
+        max + factor[index]
+      ]
+    }
+  }, [0, 0]))
+
+  const calculateMax = () => totals.reduce((max, totals) => totals[1] > max ? totals[1] : max, 0)
+  const calculateLeaders = () => totals.map((totals, index) => totals[1] === max && index)
+
+  const [totals, setTotals] = useState(calculateTotals(choices, factorsChoices))
+  const [max, setMax] = useState(calculateMax(totals))
+  const [leaders, setLeaders] = useState(calculateLeaders(totals))
+
+  useEffect(() => {
+    setTotals(calculateTotals())
+  }, [choices, factorsChoices])
+
+  useEffect(() => {
+    setMax(calculateMax())
+  }, [totals])
+
+  useEffect(() => {
+    setLeaders(calculateLeaders())
+  }, [totals, max])
 
   return <div>
     <Global styles={css`
@@ -75,23 +113,8 @@ const App = () => {
       <StyledTable>
         <tbody>
           {choices.map((choice, index) => <tr key={index}>
-            <th>{choice}</th>
-            <td>{factorsChoices.reduce((totals, factor) => {
-              const min = totals[0]
-              const max = totals[1]
-
-              if(factor[index] < 0) {
-                return [
-                  min,
-                  max + 3
-                ]
-              } else {
-                return [
-                  min + factor[index],
-                  max + factor[index]
-                ]
-              }
-            }, [0, 0]).reduce((string, total) => {
+            <th>{choice} {leaders.includes(index) && `⭐`}</th>
+            <td>{totals[index].reduce((string, total) => {
               if(string.length === 0) {
                 return `${total}`
               } else {
@@ -103,6 +126,7 @@ const App = () => {
                 }
               }
             }, '')}</td>
+            <td style={{width: '100%'}}><BarChart totals={totals[index]} max={max} /></td>
           </tr>)}
         </tbody>
       </StyledTable>
@@ -135,6 +159,7 @@ const StyledTable = styled.table`
     text-align: center;
     border: 1px solid #222;
     user-select: none;
+    white-space: nowrap;
   }
 
   td:not(:first-of-type) {
