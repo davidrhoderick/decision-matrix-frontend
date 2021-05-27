@@ -3,7 +3,7 @@ import {css, Global} from '@emotion/react'
 import styled from '@emotion/styled'
 
 import {useSelector, useDispatch} from 'react-redux'
-import {incrementFactor} from './factorsChoicesSlice'
+import {incrementFactor, decrementFactor} from './factorsChoicesSlice'
 import {addChoice, removeChoice, changeChoice} from './choicesSlice'
 import {addFactor, removeFactor, changeFactor} from './factorsSlice'
 
@@ -55,6 +55,16 @@ const App = () => {
     setLeaders(calculateLeaders())
   }, [totals, max]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  const handleFactorChoiceClick = (event, factorIndex, choiceIndex) => {
+    event.preventDefault()
+    
+    if(event.type === 'click' || event.nativeEvent.which === 1) {
+      dispatch(incrementFactor({factor: factorIndex, choice: choiceIndex}))
+    } else if(event.type === 'contextmenu' || event.nativeEvent.which === 3) {
+      dispatch(decrementFactor({factor: factorIndex, choice: choiceIndex}))
+    }
+  }
+
   return <div>
     <Global styles={css`
       body {
@@ -95,7 +105,7 @@ const App = () => {
         <tbody>
           {factors.map((factor, factorIndex) => <tr key={factorIndex}>
             <th><StyledInput value={factor} onChange={event => dispatch(changeFactor({name: event.target.value, index: factorIndex}))} /> {factors.length > 1 && <Remove onClick={() => dispatch(removeFactor(factorIndex))} />}</th>
-            {factorsChoices[factorIndex].map((choiceFactor, choiceIndex) => <td key={choiceIndex} onClick={() => dispatch(incrementFactor({factor: factorIndex, choice: choiceIndex}))}>{choiceFactor < 0 ? '?' : choiceFactor}</td>)}
+            {factorsChoices[factorIndex].map((choiceFactor, choiceIndex) => <td key={choiceIndex} onClick={event => handleFactorChoiceClick(event, factorIndex, choiceIndex)} onContextMenu={event => handleFactorChoiceClick(event, factorIndex, choiceIndex)}>{choiceFactor < 0 ? '?' : choiceFactor}</td>)}
           </tr>)}
           <tr>
             <td><StyledInput value={newFactor} onChange={(event) => setNewFactor(event.target.value)} placeholder="Add factor" /><Add onClick={() => {
