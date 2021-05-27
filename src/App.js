@@ -45,15 +45,15 @@ const App = () => {
 
   useEffect(() => {
     setTotals(calculateTotals())
-  }, [choices, factorsChoices])
+  }, [choices, factorsChoices]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setMax(calculateMax())
-  }, [totals])
+  }, [totals]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setLeaders(calculateLeaders())
-  }, [totals, max])
+  }, [totals, max]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return <div>
     <Global styles={css`
