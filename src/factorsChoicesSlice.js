@@ -6,7 +6,7 @@ export const factorsChoicesSlice = createSlice({
     matrix: [[
         1, 2
       ], [
-        3, 3
+        3, -1
       ]
     ]
   },
@@ -15,7 +15,7 @@ export const factorsChoicesSlice = createSlice({
       state.matrix[action.payload.factor][action.payload.choice]++
 
       if(state.matrix[action.payload.factor][action.payload.choice] > 3) {
-        state.matrix[action.payload.factor][action.payload.choice] = 0
+        state.matrix[action.payload.factor][action.payload.choice] = -1
       }
     }
   },

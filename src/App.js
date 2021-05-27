@@ -57,7 +57,7 @@ const App = () => {
         <tbody>
           {factors.map((factor, factorIndex) => <tr key={factorIndex}>
             <th><StyledInput value={factor} onChange={event => dispatch(changeFactor({name: event.target.value, index: factorIndex}))} /> {factors.length > 1 && <Remove onClick={() => dispatch(removeFactor(factorIndex))} />}</th>
-            {factorsChoices[factorIndex].map((choiceFactor, choiceIndex) => <td key={choiceIndex} onClick={() => dispatch(incrementFactor({factor: factorIndex, choice: choiceIndex}))}>{choiceFactor}</td>)}
+            {factorsChoices[factorIndex].map((choiceFactor, choiceIndex) => <td key={choiceIndex} onClick={() => dispatch(incrementFactor({factor: factorIndex, choice: choiceIndex}))}>{choiceFactor < 0 ? '?' : choiceFactor}</td>)}
           </tr>)}
           <tr>
             <td><StyledInput value={newFactor} onChange={(event) => setNewFactor(event.target.value)} placeholder="Add factor" /><Add onClick={() => {
@@ -76,7 +76,33 @@ const App = () => {
         <tbody>
           {choices.map((choice, index) => <tr key={index}>
             <th>{choice}</th>
-            <td>{factorsChoices.reduce((sum, factor) => sum += factor[index], 0)}</td>
+            <td>{factorsChoices.reduce((totals, factor) => {
+              const min = totals[0]
+              const max = totals[1]
+
+              if(factor[index] < 0) {
+                return [
+                  min,
+                  max + 3
+                ]
+              } else {
+                return [
+                  min + factor[index],
+                  max + factor[index]
+                ]
+              }
+            }, [0, 0]).reduce((string, total) => {
+              if(string.length === 0) {
+                return `${total}`
+              } else {
+                // eslint-disable-next-line eqeqeq
+                if(string == total) {
+                  return string
+                } else {
+                  return `${string}-${total}`
+                }
+              }
+            }, '')}</td>
           </tr>)}
         </tbody>
       </StyledTable>
