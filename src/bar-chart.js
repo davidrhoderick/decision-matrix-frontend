@@ -1,14 +1,14 @@
 import styled from '@emotion/styled'
 
-const BarChart = ({totals, max}) => {
+const BarChart = ({totals, max, colors}) => {
   return <Bar>
     {[...Array(max)].map((value, index) => {
       if(index < totals[0]) {
-        return <Filled key={index}/>
+        return <Filled key={index} color={colors.body} />
       } else if(index < totals[1]) {
-        return <Fuzzy key={index}/>
+        return <Fuzzy key={index} color={colors.grey} />
       } else {
-        return <Empty key={index}/>
+        return <Empty key={index} color={colors.bg} />
       }
     })}
   </Bar>
@@ -24,22 +24,19 @@ const Bar = styled.div`
 `
 
 const Filled = styled.div`
-  background: #222;
-  border-right: 1px solid white;
+  background: ${({color}) => color};
   flex: 1;
   height: 1rem;
 `
 
 const Fuzzy = styled.div`
-  background: #999;
-  border-right: 1px solid white;
+  background: ${({color}) => color};
   flex: 1;
   height: 1rem;
 `
 
 const Empty = styled.div`
-  background: transparent;
-  border-right: 1px solid white;
+  background: ${({color}) => color};
   flex: 1;
   height: 1rem;
 `

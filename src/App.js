@@ -9,6 +9,12 @@ import {addFactor, removeFactor, changeFactor} from './factorsSlice'
 
 import BarChart from './bar-chart'
 
+const colors = {
+  body: '#222',
+  grey: '#999',
+  bg: '#fff'
+}
+
 const App = () => {
   const dispatch = useDispatch()
 
@@ -74,6 +80,7 @@ const App = () => {
           sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        color: ${colors.body}
       }
 
       code {
@@ -125,7 +132,7 @@ const App = () => {
           <tbody>
             {choices.map((choice, index) => <tr key={index}>
               <th>{choice} {leaders.includes(index) && `⭐`}</th>
-              <td>{totals[index].reduce((string, total) => {
+              <td>{totals[index]?.reduce((string, total) => {
                 if(string.length === 0) {
                   return `${total}`
                 } else {
@@ -145,9 +152,9 @@ const App = () => {
       <Col>
         <BarCharts>
           {choices.map((choice, index) => <BarChartContainer key={index}>
-            <BarChart totals={totals[index]} max={max} />
-            <h2>{choice} {leaders.includes(index) && `⭐`}</h2>
-          </BarChartContainer>)}
+              {totals.length === choices.length && <BarChart colors={colors} totals={totals[index]} max={max} />}
+              <h2>{choice}</h2>
+            </BarChartContainer>)}
         </BarCharts>
       </Col>
     </Row>
@@ -249,6 +256,14 @@ const BarChartContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 0;
+  flex: 1;
+
+  &:nth-of-type(even) {
+    h2 {
+      margin-top: 2.5rem;
+    }
+  }
 
   h2 {
     font-size: 1rem;

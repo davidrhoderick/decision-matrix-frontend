@@ -16,7 +16,11 @@ const store = configureStore({
 })
 
 store.subscribe(() => {
-  saveState(store.getState())
+  saveState({
+    choices: store.getState().choices,
+    factors: store.getState().factors,
+    factorsChoices: store.getState().factorsChoices
+  })
 })
 
 export default store
