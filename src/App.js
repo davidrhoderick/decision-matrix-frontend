@@ -119,28 +119,38 @@ const App = () => {
       </StyledTable>
     </div>
     
-    <div>
-      <StyledTable>
-        <tbody>
-          {choices.map((choice, index) => <tr key={index}>
-            <th>{choice} {leaders.includes(index) && `⭐`}</th>
-            <td>{totals[index].reduce((string, total) => {
-              if(string.length === 0) {
-                return `${total}`
-              } else {
-                // eslint-disable-next-line eqeqeq
-                if(string == total) {
-                  return string
+    <Row>
+      <Col>
+        <StyledTable>
+          <tbody>
+            {choices.map((choice, index) => <tr key={index}>
+              <th>{choice} {leaders.includes(index) && `⭐`}</th>
+              <td>{totals[index].reduce((string, total) => {
+                if(string.length === 0) {
+                  return `${total}`
                 } else {
-                  return `${string}-${total}`
+                  // eslint-disable-next-line eqeqeq
+                  if(string == total) {
+                    return string
+                  } else {
+                    return `${string}-${total}`
+                  }
                 }
-              }
-            }, '')}</td>
-            <td style={{width: '100%'}}><BarChart totals={totals[index]} max={max} /></td>
-          </tr>)}
-        </tbody>
-      </StyledTable>
-    </div>
+              }, '')}</td>
+            </tr>)}
+          </tbody>
+        </StyledTable>
+      </Col>
+
+      <Col>
+        <BarCharts>
+          {choices.map((choice, index) => <BarChartContainer key={index}>
+            <BarChart totals={totals[index]} max={max} />
+            <h2>{choice} {leaders.includes(index) && `⭐`}</h2>
+          </BarChartContainer>)}
+        </BarCharts>
+      </Col>
+    </Row>
   </div>
 }
 
@@ -163,6 +173,7 @@ const AxisTitle = styled.h2`
 const StyledTable = styled.table`
   margin: 1rem 2rem 1rem 4rem;
   border-collapse: collapse;
+  display: inline-block;
 
   th, td {
     padding: 1rem;
@@ -210,4 +221,38 @@ const StyledInput = styled.input`
   border: none;
   padding-bottom: 0.375rem;
   border-bottom: 1px solid #222;
+  width: 120px;
+`
+
+const Row = styled.div`
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+`
+
+const Col = styled.div`
+  width: 33%;
+
+  @media screen and (max-width: 768px) {
+    width: 100%;
+  }
+`
+
+const BarCharts = styled.div`
+  margin: 1rem 4rem;
+  display: flex;
+`
+
+const BarChartContainer = styled.div`
+  position: relative;
+  margin-right: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  h2 {
+    font-size: 1rem;
+    text-align: center;
+    white-space: nowrap;
+  }
 `

@@ -18,7 +18,9 @@ export default BarChart
 
 const Bar = styled.div`
   display: flex;
-  width: 100%;
+  width: 2rem;
+  height: 15rem;
+  flex-direction: column-reverse;
 `
 
 const Filled = styled.div`
