@@ -1,24 +1,42 @@
 import Title from "./Title";
 
 import { Link, useNavigate } from "react-router-dom";
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { clearAuth } from "@/redux/authSlice";
 
 const Home: FC = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [data, setData] = useState("loading");
+
+  const { tokenType, accessToken } = useSelector(
+    (state: RootState) => state.auth
+  );
+
   useEffect(() => {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/`, {
       credentials: "include",
+      headers: {
+        Authorization: `${tokenType} ${accessToken}`,
+      },
     })
       .then((response) => response.json())
       .then((data) => setData(data.status));
-  }, []);
+  }, [accessToken, tokenType]);
 
-  const signout = () =>
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/signout`, {
-      method: "POST",
-      credentials: "include",
-    }).then(() => navigate("/login"));
+  const signout = useCallback(
+    () =>
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/signout`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          Authorization: `${tokenType} ${accessToken}`,
+        },
+      }).then(() => dispatch(clearAuth())),
+    [accessToken, navigate, tokenType]
+  );
 
   return (
     <div>

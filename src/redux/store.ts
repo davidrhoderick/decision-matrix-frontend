@@ -1,17 +1,18 @@
 import { configureStore } from "@reduxjs/toolkit";
 
+import auth from "./authSlice";
 import choices from "./choicesSlice";
 import factors from "./factorsSlice";
 import factorsChoices from "./factorsChoicesSlice";
 
 const store = configureStore({
   reducer: {
+    auth,
     choices,
     factors,
     factorsChoices,
   },
 });
-
 
 export default store;
 

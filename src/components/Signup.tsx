@@ -2,8 +2,21 @@ import { Link, useNavigate } from "react-router-dom";
 import { FC, useCallback, useState } from "react";
 
 import Title from "./Title";
+import { setAuth } from "@/redux/authSlice";
+import { useDispatch } from "react-redux";
+
+export type AuthResponse = {
+  tokenType: string;
+  session: {
+    id: string;
+    userId: string;
+    fresh: boolean;
+    expiresAt: string;
+  };
+};
 
 const Signup: FC = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [usernameError, setUsernameError] = useState("");
@@ -44,13 +57,20 @@ const Signup: FC = () => {
       body: JSON.stringify({ username, password }),
       credentials: "include",
     })
-      .then(() => {
+      .then((response) => response.json())
+      .then((data: AuthResponse) => {
+        dispatch(
+          setAuth({
+            tokenType: data.tokenType,
+            accessToken: data.session.id,
+          })
+        );
         console.log("redirecting...");
         navigate("/");
       })
       .catch((error) => console.error(error))
       .finally(() => setLoading(false));
-  }, [username, password, confirmPassword, navigate]);
+  }, [username, password, confirmPassword, dispatch, navigate]);
 
   return (
     <div>
