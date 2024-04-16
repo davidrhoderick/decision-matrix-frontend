@@ -60,7 +60,7 @@ const Login: FC = () => {
 
   return (
     <div>
-      <h1>Login</h1>
+      <Title>Login</Title>
 
       <input
         placeholder="username"
@@ -139,7 +139,7 @@ const Signup: FC = () => {
 
   return (
     <div>
-      <h1>Sign up</h1>
+      <Title>Sign up</Title>
 
       <input
         placeholder="username"
@@ -193,7 +193,7 @@ const Home: FC = () => {
 
   return (
     <div>
-      <h1>{data}</h1>
+      <Title>{data}</Title>
       {data !== "loading" &&
         (data === "logged in" ? (
           <button onClick={signout}>Sign out</button>
