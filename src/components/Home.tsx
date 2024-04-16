@@ -7,7 +7,7 @@ const Home: FC = () => {
   const navigate = useNavigate();
   const [data, setData] = useState("loading");
   useEffect(() => {
-    fetch("http://localhost:3000", {
+    fetch(`${process.env.BACKEND_URL}/`, {
       credentials: "include",
     })
       .then((response) => response.json())
@@ -15,7 +15,7 @@ const Home: FC = () => {
   }, []);
 
   const signout = () =>
-    fetch("http://localhost:3000/signout", {
+    fetch(`${process.env.BACKEND_URL}/signout`, {
       method: "POST",
       credentials: "include",
     }).then(() => navigate("/login"));
