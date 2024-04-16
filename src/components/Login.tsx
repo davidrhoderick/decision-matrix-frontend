@@ -30,7 +30,7 @@ const Login: FC = () => {
 
     setLoading(true);
 
-    fetch(`${process.env.BACKEND_URL}/login`, {
+    fetch(`${process.env.VITE_BACKEND_URL}/login`, {
       method: "POST",
       headers: {
         "content-type": "application/json",

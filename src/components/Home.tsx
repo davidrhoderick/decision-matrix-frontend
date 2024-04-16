@@ -7,7 +7,7 @@ const Home: FC = () => {
   const navigate = useNavigate();
   const [data, setData] = useState("loading");
   useEffect(() => {
-    fetch(`${process.env.BACKEND_URL}/`, {
+    fetch(`${process.env.VITE_BACKEND_URL}/`, {
       credentials: "include",
     })
       .then((response) => response.json())
@@ -15,7 +15,7 @@ const Home: FC = () => {
   }, []);
 
   const signout = () =>
-    fetch(`${process.env.BACKEND_URL}/signout`, {
+    fetch(`${process.env.VITE_BACKEND_URL}/signout`, {
       method: "POST",
       credentials: "include",
     }).then(() => navigate("/login"));
