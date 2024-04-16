@@ -3,7 +3,7 @@ import { FC, useCallback, useState } from "react";
 
 import Title from "./Title";
 import { useDispatch } from "react-redux";
-import { AuthState, setAuth } from "@/redux/authSlice";
+import { setAuth } from "@/redux/authSlice";
 import { AuthResponse } from "./Signup";
 
 const Login: FC = () => {
