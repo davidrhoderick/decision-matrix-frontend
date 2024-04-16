@@ -9,8 +9,6 @@ import store from "@/redux/store";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
-import Table from "@/components/Table";
-import Totals from "@/components/Totals";
 
 const router = createBrowserRouter([
   {
@@ -49,12 +47,6 @@ const App = () => (
     />
 
     <RouterProvider router={router} />
-
-    {/* <Title>Decision Matrix</Title>
-
-    <Table />
-
-    <Totals /> */}
   </Provider>
 );
 
