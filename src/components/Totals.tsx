@@ -1,8 +1,11 @@
 import { FC, useMemo } from "react";
-import StyledTable from "./StyledTable";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+
 import styled from "@emotion/styled";
+import { useSelector } from "react-redux";
+
+import { RootState } from "@/redux/store";
+
+import StyledTable from "./StyledTable";
 import BarChart from "./BarChart";
 
 const Totals: FC = () => {

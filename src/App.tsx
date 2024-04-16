@@ -2,10 +2,10 @@ import { css, Global } from "@emotion/react";
 
 import styled from "@emotion/styled";
 
-import Table from "./components/Table";
-import Totals from "./components/Totals";
-import colors from "./lib/colors";
-import store from "../redux/store";
+import Table from "@/components/Table";
+import Totals from "@/components/Totals";
+import colors from "@/lib/colors";
+import store from "@/redux/store";
 import { Provider } from "react-redux";
 
 const App = () => (
