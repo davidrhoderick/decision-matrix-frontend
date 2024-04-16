@@ -1,7 +1,7 @@
 import { FC, useMemo } from "react";
 import StyledTable from "./StyledTable";
 import { useSelector } from "react-redux";
-import { RootState } from "../store";
+import { RootState } from "../../redux/store";
 import styled from "@emotion/styled";
 import BarChart from "./BarChart";
 

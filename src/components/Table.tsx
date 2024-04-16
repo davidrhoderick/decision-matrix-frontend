@@ -1,12 +1,12 @@
 import { FC, MouseEvent, useState } from "react";
 import styled from "@emotion/styled";
 
-import { addChoice, removeChoice, changeChoice } from "../choicesSlice";
-import { addFactor, removeFactor, changeFactor } from "../factorsSlice";
+import { addChoice, removeChoice, changeChoice } from "../../redux/choicesSlice";
+import { addFactor, removeFactor, changeFactor } from "../../redux/factorsSlice";
 import StyledTable from "./StyledTable";
-import { RootState } from "../store";
+import { RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { decrementFactor, incrementFactor } from "../factorsChoicesSlice";
+import { decrementFactor, incrementFactor } from "../../redux/factorsChoicesSlice";
 
 const Table: FC = () => {
   const { list: choices } = useSelector((state: RootState) => state.choices);
