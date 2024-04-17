@@ -1,14 +1,14 @@
 import Title from "./Title";
 
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FC, useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
-import { clearAuth } from "@/redux/authSlice";
+import { AppDispatch, RootState } from "@/redux/store";
+import { signout } from "@/redux/authSlice";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 const Home: FC = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
   const [data, setData] = useState("loading");
 
   const { tokenType, accessToken } = useSelector(
@@ -26,24 +26,18 @@ const Home: FC = () => {
       .then((data) => setData(data.status));
   }, [accessToken, tokenType]);
 
-  const signout = useCallback(
-    () =>
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/signout`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          Authorization: `${tokenType} ${accessToken}`,
-        },
-      }).then(() => dispatch(clearAuth())),
-    [accessToken, navigate, tokenType]
-  );
+  const handleSignout = useCallback(() => {
+    dispatch(signout())
+      .then(unwrapResult)
+      .catch((error: unknown) => console.error(error));
+  }, [dispatch]);
 
   return (
     <div>
       <Title>{data}</Title>
       {data !== "loading" &&
         (data === "logged in" ? (
-          <button onClick={signout}>Sign out</button>
+          <button onClick={handleSignout}>Sign out</button>
         ) : (
           <Link to="/login">Login</Link>
         ))}

@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-import auth from "./authSlice";
+import auth, { AUTH_LOCAL_STORAGE_KEY } from "./authSlice";
 import choices from "./choicesSlice";
 import factors from "./factorsSlice";
 import factorsChoices from "./factorsChoicesSlice";
@@ -12,6 +12,10 @@ const store = configureStore({
     factors,
     factorsChoices,
   },
+});
+
+store.subscribe(() => {
+  localStorage.setItem(AUTH_LOCAL_STORAGE_KEY, JSON.stringify(store.getState().auth));
 });
 
 export default store;
