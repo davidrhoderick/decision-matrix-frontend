@@ -1,61 +1,56 @@
 import { Link, useNavigate } from "react-router-dom";
-import { FC, useCallback, useState } from "react";
+import { FC, useState } from "react";
+
+import { useDispatch } from "react-redux";
+import { useForm } from "react-hook-form";
+import { ErrorMessage } from "@hookform/error-message";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { AppDispatch } from "@/redux/store";
+
+import { login } from "@/redux/authSlice";
 
 import Title from "./Title";
-import { useDispatch } from "react-redux";
-import { setAuth } from "@/redux/authSlice";
-import { AuthResponse } from "./Signup";
+
+type FormData = {
+  username: string;
+  password: string;
+};
 
 const Login: FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
-  const [usernameError, setUsernameError] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+  const [loginError, setLoginError] = useState("");
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm<FormData>();
 
   const [loading, setLoading] = useState(false);
 
-  const submit = useCallback(() => {
-    if (
-      !username ||
-      username.length < 3 ||
-      username.length > 31 ||
-      !/^[a-z0-9_-]+$/.test(username)
-    ) {
-      setUsernameError("Invalid username");
-      return;
-    }
+  watch(() => {
+    setLoginError("");
+  });
 
-    if (!password || password.length < 6 || password.length > 255) {
-      setPasswordError("Invalid password");
-      return;
-    }
-
+  const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
-
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/login`, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data: AuthResponse) => {
-        dispatch(
-          setAuth({
-            tokenType: data.tokenType,
-            accessToken: data.session.id,
-          })
-        );
-        console.log("redirecting...");
+    dispatch(login(data))
+      .then(unwrapResult)
+      .then(() => {
+        setLoading(false);
         navigate("/");
       })
-      .catch((error) => console.error(error))
-      .finally(() => setLoading(false));
-  }, [username, password, dispatch, navigate]);
+      .catch((error) => {
+        setLoading(false);
+        setLoginError(error);
+        console.error(error);
+      });
+  });
+
+  const usernameMessage = "Please enter a valid username" as const;
+  const passwordMessage = "Please enter a valid password" as const;
 
   return (
     <div>
@@ -63,24 +58,36 @@ const Login: FC = () => {
 
       <input
         placeholder="username"
-        value={username}
-        onChange={(event) => setUsername(event.target.value)}
+        {...register("username", {
+          minLength: { value: 3, message: usernameMessage },
+          maxLength: { value: 31, message: usernameMessage },
+          pattern: {
+            value: /^[a-z0-9_-]+$/,
+            message: usernameMessage,
+          },
+          required: { value: true, message: usernameMessage },
+        })}
       />
 
-      {usernameError && <span>{usernameError}</span>}
+      <ErrorMessage errors={errors} name="username" />
 
       <input
         placeholder="password"
-        value={password}
         type="password"
-        onChange={(event) => setPassword(event.target.value)}
+        {...register("password", {
+          minLength: { value: 6, message: passwordMessage },
+          maxLength: { value: 255, message: passwordMessage },
+          required: { value: true, message: passwordMessage },
+        })}
       />
 
-      {passwordError && <span>{passwordError}</span>}
+      <ErrorMessage errors={errors} name="password" />
 
-      <button onClick={submit} disabled={loading}>
+      <button onClick={onSubmit} disabled={loading}>
         Submit
       </button>
+
+      {loginError && <div>{loginError}</div>}
 
       <Link to="/signup">Sign up</Link>
     </div>

@@ -1,4 +1,4 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 export type AuthResponse = {
   tokenType: string;
@@ -23,7 +23,7 @@ const initialState: AuthState = {
   state: "uninitialized",
 };
 
-export const authenticate = createAsyncThunk<
+export const login = createAsyncThunk<
   AuthResponse,
   { username: string; password: string }
 >("auth/login", async ({ username, password }, { rejectWithValue }) => {
@@ -35,19 +35,41 @@ export const authenticate = createAsyncThunk<
       },
       body: JSON.stringify({ username, password }),
     });
-    return response.json();
+
+    if (response.ok) {
+      return response.json();
+    }
+
+    const error = await response.text();
+
+    return rejectWithValue(error);
   } catch (error) {
-    rejectWithValue(error);
-    // if (error.response) {
-    //   return rejectWithValue({
-    //     status: error.response?.status ? error.response.status : 500,
-    //     data: error.response?.data
-    //       ? { ...error.response.data }
-    //       : { message: "No error data provided" },
-    //   });
-    // } else {
-    //   return rejectWithValue(error.toString());
-    // }
+    return rejectWithValue((error as TypeError).message);
+  }
+});
+
+export const signup = createAsyncThunk<
+  AuthResponse,
+  { username: string; password: string }
+>("auth/signup", async ({ username, password }, { rejectWithValue }) => {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/signup`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    });
+
+    if (response.ok) {
+      return response.json();
+    }
+
+    const error = await response.text();
+
+    return rejectWithValue(error);
+  } catch (error) {
+    return rejectWithValue((error as TypeError).message);
   }
 });
 
@@ -55,20 +77,32 @@ export const choicesSlice = createSlice({
   name: "choices",
   initialState,
   reducers: {
-    setAuth: (_state, action: PayloadAction<AuthState>) => action.payload,
     clearAuth: () => initialState,
   },
   extraReducers: (builder) => {
     builder
-      .addCase(authenticate.pending, (state) => {
+      .addCase(login.pending, (state) => {
         state.state = "pending";
       })
-      .addCase(authenticate.fulfilled, (state, action) => {
+      .addCase(login.fulfilled, (state, action) => {
         state.accessToken = action.payload.session.id;
         state.tokenType = action.payload.tokenType;
         state.state = "fulfilled";
       })
-      .addCase(authenticate.rejected, (state) => {
+      .addCase(login.rejected, (state) => {
+        state.accessToken = "";
+        state.tokenType = "";
+        state.state = "rejected";
+      })
+      .addCase(signup.pending, (state) => {
+        state.state = "pending";
+      })
+      .addCase(signup.fulfilled, (state, action) => {
+        state.accessToken = action.payload.session.id;
+        state.tokenType = action.payload.tokenType;
+        state.state = "fulfilled";
+      })
+      .addCase(signup.rejected, (state) => {
         state.accessToken = "";
         state.tokenType = "";
         state.state = "rejected";
@@ -76,6 +110,6 @@ export const choicesSlice = createSlice({
   },
 });
 
-export const { setAuth, clearAuth } = choicesSlice.actions;
+export const { clearAuth } = choicesSlice.actions;
 
 export default choicesSlice.reducer;

@@ -1,108 +1,108 @@
 import { Link, useNavigate } from "react-router-dom";
-import { FC, useCallback, useState } from "react";
+import { FC, useState } from "react";
+
+import { useDispatch } from "react-redux";
+import { useForm } from "react-hook-form";
+import { ErrorMessage } from "@hookform/error-message";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { AppDispatch } from "@/redux/store";
+
+import { signup } from "@/redux/authSlice";
 
 import Title from "./Title";
-import { setAuth } from "@/redux/authSlice";
-import { useDispatch } from "react-redux";
 
-export type AuthResponse = {
-  tokenType: string;
-  session: {
-    id: string;
-    userId: string;
-    fresh: boolean;
-    expiresAt: string;
-  };
+type FormData = {
+  username: string;
+  password: string;
+  confirmPassword: string;
 };
 
 const Signup: FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
-  const [usernameError, setUsernameError] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+  const [signupError, setSignupError] = useState("");
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm<FormData>();
 
   const [loading, setLoading] = useState(false);
 
-  const submit = useCallback(() => {
-    if (
-      !username ||
-      username.length < 3 ||
-      username.length > 31 ||
-      !/^[a-z0-9_-]+$/.test(username)
-    ) {
-      setUsernameError("Invalid username");
-      return;
+  watch(() => {
+    setSignupError("");
+  });
+
+  const onSubmit = handleSubmit(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async ({ confirmPassword, ...data }) => {
+      setLoading(true);
+      dispatch(signup(data))
+        .then(unwrapResult)
+        .then(() => {
+          setLoading(false);
+          navigate("/");
+        })
+        .catch((error) => {
+          setLoading(false);
+          setSignupError(error.message ?? error);
+          console.error(error);
+        });
     }
+  );
 
-    if (
-      !password ||
-      password.length < 6 ||
-      password.length > 255 ||
-      password !== confirmPassword
-    ) {
-      setPasswordError("Invalid password");
-      return;
-    }
-
-    setLoading(true);
-
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/signup`, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data: AuthResponse) => {
-        dispatch(
-          setAuth({
-            tokenType: data.tokenType,
-            accessToken: data.session.id,
-          })
-        );
-        console.log("redirecting...");
-        navigate("/");
-      })
-      .catch((error) => console.error(error))
-      .finally(() => setLoading(false));
-  }, [username, password, confirmPassword, dispatch, navigate]);
+  const usernameMessage = "Please enter a valid username" as const;
+  const passwordMessage = "Please enter a valid password" as const;
 
   return (
     <div>
-      <Title>Sign up</Title>
+      <Title>Signup</Title>
 
       <input
         placeholder="username"
-        value={username}
-        onChange={(event) => setUsername(event.target.value)}
+        {...register("username", {
+          minLength: { value: 3, message: usernameMessage },
+          maxLength: { value: 31, message: usernameMessage },
+          pattern: {
+            value: /^[a-z0-9_-]+$/,
+            message: usernameMessage,
+          },
+          required: { value: true, message: usernameMessage },
+        })}
       />
 
-      {usernameError && <span>{usernameError}</span>}
+      <ErrorMessage errors={errors} name="username" />
 
       <input
         placeholder="password"
-        value={password}
         type="password"
-        onChange={(event) => setPassword(event.target.value)}
+        {...register("password", {
+          minLength: { value: 6, message: passwordMessage },
+          maxLength: { value: 255, message: passwordMessage },
+          required: { value: true, message: passwordMessage },
+        })}
       />
+
+      <ErrorMessage errors={errors} name="password" />
 
       <input
         placeholder="confirm password"
-        value={confirmPassword}
         type="password"
-        onChange={(event) => setConfirmPassword(event.target.value)}
+        {...register("confirmPassword", {
+          validate: (value, { password }) =>
+            value === password || "Password values must match",
+        })}
       />
 
-      {passwordError && <span>{passwordError}</span>}
+      <ErrorMessage errors={errors} name="confirmPassword" />
 
-      <button onClick={submit} disabled={loading}>
+      <button onClick={onSubmit} disabled={loading}>
         Submit
       </button>
+
+      {signupError && <div>{signupError}</div>}
 
       <Link to="/login">Login</Link>
     </div>
