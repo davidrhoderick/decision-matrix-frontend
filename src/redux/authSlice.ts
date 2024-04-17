@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { RootState } from "./store";
+import type { RootState } from "./store";
 
 export type AuthResponse = {
   tokenType: string;
@@ -11,8 +11,6 @@ export type AuthResponse = {
   };
 };
 
-export const AUTH_LOCAL_STORAGE_KEY = "auth" as const;
-
 type RequestState = "uninitialized" | "pending" | "fulfilled" | "rejected";
 
 export interface AuthState {
@@ -21,9 +19,7 @@ export interface AuthState {
   state: RequestState;
 }
 
-const initialState: AuthState = JSON.parse(
-  localStorage.getItem(AUTH_LOCAL_STORAGE_KEY) as string
-) ?? {
+const initialState: AuthState = {
   tokenType: "",
   accessToken: "",
   state: "uninitialized",

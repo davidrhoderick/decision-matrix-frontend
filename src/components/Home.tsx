@@ -23,7 +23,8 @@ const Home: FC = () => {
       },
     })
       .then((response) => response.json())
-      .then((data) => setData(data.status));
+      .then((data) => setData(data.status))
+      .catch((error) => console.error(error));
   }, [accessToken, tokenType]);
 
   const handleSignout = useCallback(() => {
@@ -36,7 +37,7 @@ const Home: FC = () => {
     <div>
       <Title>{data}</Title>
       {data !== "loading" &&
-        (data === "logged in" ? (
+        (data === "Logged in" ? (
           <button onClick={handleSignout}>Sign out</button>
         ) : (
           <Link to="/login">Login</Link>

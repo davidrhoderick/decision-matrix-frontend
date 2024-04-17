@@ -1,21 +1,45 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
-import auth, { AUTH_LOCAL_STORAGE_KEY } from "./authSlice";
-import choices from "./choicesSlice";
-import factors from "./factorsSlice";
-import factorsChoices from "./factorsChoicesSlice";
+import auth from "./authSlice";
+// import choices from "./choicesSlice";
+// import factors from "./factorsSlice";
+// import factorsChoices from "./factorsChoicesSlice";
+import storage from "redux-persist/lib/storage";
+import {
+  FLUSH,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+  REHYDRATE,
+  persistReducer,
+} from "redux-persist";
+import {matrixApi} from "./matrixApi";
 
-const store = configureStore({
-  reducer: {
-    auth,
-    choices,
-    factors,
-    factorsChoices,
-  },
+const reducers = combineReducers({
+  auth,
+  [matrixApi.reducerPath]: matrixApi.reducer,
+  // choices,
+  // factors,
+  // factorsChoices,
 });
 
-store.subscribe(() => {
-  localStorage.setItem(AUTH_LOCAL_STORAGE_KEY, JSON.stringify(store.getState().auth));
+const persistConfig = {
+  key: "auth",
+  storage,
+  whitelist: ["auth"],
+};
+
+const persistedReducer = persistReducer(persistConfig, reducers);
+
+const store = configureStore({
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }).concat(matrixApi.middleware),
 });
 
 export default store;
