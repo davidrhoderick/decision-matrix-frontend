@@ -368,7 +368,8 @@
         "required": [
           "username",
           "password"
-        ]
+        ],
+        "additionalProperties": false
       },
       "auth.response": {
         "type": "object",
@@ -395,12 +396,12 @@
                   },
                   {
                     "format": "date",
-                    "default": "2024-04-17T20:32:54.617Z",
+                    "default": "2024-04-18T07:03:30.921Z",
                     "type": "string"
                   },
                   {
                     "format": "date-time",
-                    "default": "2024-04-17T20:32:54.617Z",
+                    "default": "2024-04-18T07:03:30.921Z",
                     "type": "string"
                   }
                 ]
@@ -417,7 +418,8 @@
         "required": [
           "tokenType",
           "session"
-        ]
+        ],
+        "additionalProperties": false
       },
       "matrices": {
         "type": "array",
@@ -435,7 +437,8 @@
             "id",
             "name"
           ]
-        }
+        },
+        "additionalProperties": false
       },
       "matrix": {
         "type": "object",
