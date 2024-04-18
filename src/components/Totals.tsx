@@ -2,24 +2,19 @@ import { FC, useMemo } from "react";
 
 import styled from "@emotion/styled";
 
-import StyledTable from "./StyledTable";
 import BarChart from "./BarChart";
-import { Matrix } from "@/redux/matrixApi";
+import { useParams } from "react-router-dom";
+import { useGetMatrixByIdQuery } from "@/redux/matrixApi";
+import { Alert, Grid, Table } from "@mui/joy";
 
-type Props = {
-  decisionMatrix: Matrix;
-};
+const Totals: FC = () => {
+  const { id } = useParams();
+  const { data } = useGetMatrixByIdQuery({ id: id as string });
 
-const Totals: FC<Props> = ({
-  decisionMatrix: {
-    choices: { list: choices },
-    factorsChoices: { matrix: factorsChoices },
-  },
-}) => {
   const totals = useMemo(
     () =>
-      choices.map((_choice, index) =>
-        factorsChoices.reduce(
+      data?.choices.list.map((_choice, index) =>
+        data?.factorsChoices.matrix.reduce(
           (totals, factor) => {
             const min = totals[0];
             const max = totals[1];
@@ -33,24 +28,36 @@ const Totals: FC<Props> = ({
           [0, 0]
         )
       ),
-    [choices, factorsChoices]
+    [data?.choices, data?.factorsChoices]
   );
 
   const max = useMemo(
     () =>
-      totals.reduce((max, totals) => (totals[1] > max ? totals[1] : max), 0),
+      totals?.reduce((max, totals) => (totals[1] > max ? totals[1] : max), 0),
     [totals]
   );
 
   const leaders = useMemo(
-    () => totals.map((totals, index) => totals[1] === max && index),
+    () => totals?.map((totals, index) => totals[1] === max && index),
     [totals, max]
   );
 
+  if (!data || !leaders || !totals || !max) {
+    return (
+      <Alert color="danger">
+        Oops! Something went wrong and we were unable to fetch your matrix.
+      </Alert>
+    );
+  }
+
+  const {
+    choices: { list: choices },
+  } = data;
+
   return (
-    <Row>
-      <Col>
-        <StyledTable>
+    <Grid container alignItems={"center"}>
+      <Grid xs={12} md={4}>
+        <Table>
           <tbody>
             {choices.map((choice, index) => (
               <tr key={index}>
@@ -71,10 +78,10 @@ const Totals: FC<Props> = ({
               </tr>
             ))}
           </tbody>
-        </StyledTable>
-      </Col>
+        </Table>
+      </Grid>
 
-      <Col>
+      <Grid xs={12} md={8}>
         <BarCharts>
           {choices.map((choice, index) => (
             <BarChartContainer key={index}>
@@ -85,26 +92,12 @@ const Totals: FC<Props> = ({
             </BarChartContainer>
           ))}
         </BarCharts>
-      </Col>
-    </Row>
+      </Grid>
+    </Grid>
   );
 };
 
 export default Totals;
-
-const Row = styled.div`
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-`;
-
-const Col = styled.div`
-  width: 33%;
-
-  @media screen and (max-width: 768px) {
-    width: 100%;
-  }
-`;
 
 const BarCharts = styled.div`
   margin: 1rem 4rem;

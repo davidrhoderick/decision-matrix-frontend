@@ -3,8 +3,9 @@ import PageContainer from "@/components/PageContainer";
 import Table from "@/components/Table";
 import Totals from "@/components/Totals";
 import { useGetMatrixByIdQuery } from "@/redux/matrixApi";
-import { Typography } from "@mui/joy";
-import { useParams } from "react-router-dom";
+import { Button, Typography } from "@mui/joy";
+import { ChevronLeft } from "lucide-react";
+import { Link, useParams } from "react-router-dom";
 
 const Matrix = () => {
   const { id } = useParams();
@@ -13,12 +14,22 @@ const Matrix = () => {
 
   return (
     <PageContainer>
+      <Button
+        variant="plain"
+        component={Link}
+        to={"/"}
+        sx={{ alignItems: "end", marginBottom: 2 }}
+      >
+        <ChevronLeft />
+        Back
+      </Button>
+
       <LoaderWrapper isLoading={isLoading}>
         <Typography level="h1">{data?.name}</Typography>
 
-        <Table decisionMatrix={data!} />
+        <Table />
 
-        <Totals decisionMatrix={data!}/>
+        <Totals />
       </LoaderWrapper>
     </PageContainer>
   );

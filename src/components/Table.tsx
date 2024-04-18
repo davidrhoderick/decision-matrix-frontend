@@ -7,20 +7,15 @@ import { addChoice, removeChoice, changeChoice } from "@/redux/choicesSlice";
 import { addFactor, removeFactor, changeFactor } from "@/redux/factorsSlice";
 import { decrementFactor, incrementFactor } from "@/redux/factorsChoicesSlice";
 
-import StyledTable from "./StyledTable";
-import { Matrix } from "@/redux/matrixApi";
+import { Alert, Table as MuiTable } from "@mui/joy";
 
-type Props = {
-  decisionMatrix: Matrix;
-};
+import { useGetMatrixByIdQuery } from "@/redux/matrixApi";
+import { useParams } from "react-router-dom";
 
-const Table: FC<Props> = ({
-  decisionMatrix: {
-    choices: { list: choices },
-    factors: { list: factors },
-    factorsChoices: { matrix: factorsChoices },
-  },
-}) => {
+const Table: FC = () => {
+  const { id } = useParams();
+  const { data } = useGetMatrixByIdQuery({ id: id as string });
+
   const dispatch = useDispatch();
 
   const [newChoice, setNewChoice] = useState("");
@@ -39,6 +34,20 @@ const Table: FC<Props> = ({
       dispatch(decrementFactor({ factor: factorIndex, choice: choiceIndex }));
     }
   };
+
+  if (!data) {
+    return (
+      <Alert color="danger">
+        Oops! Something went wrong and we were unable to fetch your matrix.
+      </Alert>
+    );
+  }
+
+  const {
+    choices: { list: choices },
+    factors: { list: factors },
+    factorsChoices: { matrix: factorsChoices },
+  } = data;
 
   return (
     <div style={{ position: "relative" }}>
@@ -99,19 +108,21 @@ const Table: FC<Props> = ({
                   <Remove onClick={() => dispatch(removeFactor(factorIndex))} />
                 )}
               </th>
-              {factorsChoices[factorIndex].map((choiceFactor, choiceIndex) => (
-                <td
-                  key={choiceIndex}
-                  onClick={(event) =>
-                    handleFactorChoiceClick(event, factorIndex, choiceIndex)
-                  }
-                  onContextMenu={(event) =>
-                    handleFactorChoiceClick(event, factorIndex, choiceIndex)
-                  }
-                >
-                  {choiceFactor < 0 ? "?" : choiceFactor}
-                </td>
-              ))}
+              {factorsChoices[factorIndex].map(
+                (choiceFactor, choiceIndex) => (
+                  <td
+                    key={choiceIndex}
+                    onClick={(event) =>
+                      handleFactorChoiceClick(event, factorIndex, choiceIndex)
+                    }
+                    onContextMenu={(event) =>
+                      handleFactorChoiceClick(event, factorIndex, choiceIndex)
+                    }
+                  >
+                    {choiceFactor < 0 ? "?" : choiceFactor}
+                  </td>
+                )
+              )}
             </tr>
           ))}
           <tr>
@@ -138,6 +149,25 @@ const Table: FC<Props> = ({
 };
 
 export default Table;
+
+const StyledTable = styled(MuiTable)`
+  // TODO Fix this spacing
+  margin: 1rem 2rem 1rem 4rem;
+  display: inline-block;
+
+  th,
+  td {
+    padding: 1rem;
+    text-align: center;
+    // border: 1px solid #222;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  td {
+    cursor: pointer;
+  }
+`;
 
 const AxisTitle = styled.h2`
   margin: 1rem 2rem;
