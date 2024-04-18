@@ -1,24 +1,27 @@
 import { FC, MouseEvent, useState } from "react";
 
 import styled from "@emotion/styled";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import { addChoice, removeChoice, changeChoice } from "@/redux/choicesSlice";
 import { addFactor, removeFactor, changeFactor } from "@/redux/factorsSlice";
-import { RootState } from "@/redux/store";
 import { decrementFactor, incrementFactor } from "@/redux/factorsChoicesSlice";
 
 import StyledTable from "./StyledTable";
+import { Matrix } from "@/redux/matrixApi";
 
-const Table: FC = () => {
-  const { list: choices } = useSelector((state: RootState) => state.choices);
-  const { list: factors } = useSelector((state: RootState) => state.factors);
+type Props = {
+  decisionMatrix: Matrix;
+};
 
+const Table: FC<Props> = ({
+  decisionMatrix: {
+    choices: { list: choices },
+    factors: { list: factors },
+    factorsChoices: { matrix: factorsChoices },
+  },
+}) => {
   const dispatch = useDispatch();
-
-  const { matrix: factorsChoices } = useSelector(
-    (state: RootState) => state.factorsChoices
-  );
 
   const [newChoice, setNewChoice] = useState("");
   const [newFactor, setNewFactor] = useState("");

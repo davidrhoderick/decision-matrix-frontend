@@ -1,19 +1,21 @@
 import { FC, useMemo } from "react";
 
 import styled from "@emotion/styled";
-import { useSelector } from "react-redux";
-
-import { RootState } from "@/redux/store";
 
 import StyledTable from "./StyledTable";
 import BarChart from "./BarChart";
+import { Matrix } from "@/redux/matrixApi";
 
-const Totals: FC = () => {
-  const { list: choices } = useSelector((state: RootState) => state.choices);
-  const { matrix: factorsChoices } = useSelector(
-    (state: RootState) => state.factorsChoices
-  );
+type Props = {
+  decisionMatrix: Matrix;
+};
 
+const Totals: FC<Props> = ({
+  decisionMatrix: {
+    choices: { list: choices },
+    factorsChoices: { matrix: factorsChoices },
+  },
+}) => {
   const totals = useMemo(
     () =>
       choices.map((_choice, index) =>

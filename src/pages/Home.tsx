@@ -5,14 +5,9 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { signout } from "@/redux/authSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { useGetIndexQuery } from "@/redux/matrixApi";
-import {
-  Button,
-  Container,
-  LinearProgress,
-  Stack,
-  Table,
-  Typography,
-} from "@mui/joy";
+import { Button, Stack, Table, Typography } from "@mui/joy";
+import LoaderWrapper from "@/components/LoaderWrapper";
+import PageContainer from "@/components/PageContainer";
 
 const Home = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -53,58 +48,50 @@ const Home = () => {
   );
 
   return (
-    <Container sx={{ mt: 3 }}>
+    <PageContainer>
       <Stack spacing={2}>
         <Typography level={"h1"}>Decision Matrix</Typography>
 
-        {isLoading ? (
-          <LinearProgress
-            color={"neutral"}
-            size={"sm"}
-            value={33}
-            variant={"plain"}
-            sx={{ width: "100%" }}
-          />
-        ) : (
-          <>
-            <Stack direction={"row"} alignItems={"start"} spacing={2}>
-              <Typography level={"h2"}>Welcome {username}!</Typography>
+        <LoaderWrapper isLoading={isLoading}>
+          <Stack direction={"row"} alignItems={"start"} spacing={2}>
+            <Typography level={"h2"}>Welcome {username}!</Typography>
 
-              <Button onClick={handleSignout} variant={"soft"} color="neutral">
-                Sign out
-              </Button>
-            </Stack>
+            <Button onClick={handleSignout} variant={"soft"} color="neutral">
+              Sign out
+            </Button>
+          </Stack>
 
-            <Table size="lg">
-              <thead>
+          <Table size="lg">
+            <thead>
+              <tr>
                 <th>Your Decisions</th>
                 <th />
-              </thead>
+              </tr>
+            </thead>
 
-              <tbody>
-                {data?.map(({ id, name }) => (
-                  <tr
-                    key={id}
-                    onClick={() => navigateToMatrix(id)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <td>{name}</td>
-                    <td align="right">
-                      <Button
-                        color={"danger"}
-                        onClick={(event) => handleDelete({ event, id })}
-                      >
-                        Delete
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </>
-        )}
+            <tbody>
+              {data?.map(({ id, name }) => (
+                <tr
+                  key={id}
+                  onClick={() => navigateToMatrix(id)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <td>{name}</td>
+                  <td align="right">
+                    <Button
+                      color={"danger"}
+                      onClick={(event) => handleDelete({ event, id })}
+                    >
+                      Delete
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </LoaderWrapper>
       </Stack>
-    </Container>
+    </PageContainer>
   );
 };
 
