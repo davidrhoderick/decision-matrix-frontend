@@ -338,14 +338,6 @@
           }
         ]
       }
-    },
-    "/edit": {
-      "$internalws": {
-        "operationId": "$internalwsEdit",
-        "responses": {
-          "200": {}
-        }
-      }
     }
   },
   "components": {
@@ -368,8 +360,7 @@
         "required": [
           "username",
           "password"
-        ],
-        "additionalProperties": false
+        ]
       },
       "auth.response": {
         "type": "object",
@@ -396,12 +387,12 @@
                   },
                   {
                     "format": "date",
-                    "default": "2024-04-18T07:03:30.921Z",
+                    "default": "2024-04-18T08:31:47.559Z",
                     "type": "string"
                   },
                   {
                     "format": "date-time",
-                    "default": "2024-04-18T07:03:30.921Z",
+                    "default": "2024-04-18T08:31:47.559Z",
                     "type": "string"
                   }
                 ]
@@ -413,13 +404,16 @@
               "fresh",
               "expiresAt"
             ]
+          },
+          "username": {
+            "type": "string"
           }
         },
         "required": [
           "tokenType",
-          "session"
-        ],
-        "additionalProperties": false
+          "session",
+          "username"
+        ]
       },
       "matrices": {
         "type": "array",
@@ -437,8 +431,7 @@
             "id",
             "name"
           ]
-        },
-        "additionalProperties": false
+        }
       },
       "matrix": {
         "type": "object",

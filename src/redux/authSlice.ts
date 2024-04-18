@@ -9,6 +9,7 @@ export type AuthResponse = {
     fresh: boolean;
     expiresAt: string;
   };
+  username: string;
 };
 
 type RequestState = "uninitialized" | "pending" | "fulfilled" | "rejected";
@@ -16,12 +17,14 @@ type RequestState = "uninitialized" | "pending" | "fulfilled" | "rejected";
 export interface AuthState {
   tokenType: string;
   accessToken: string;
+  username: string;
   state: RequestState;
 }
 
 const initialState: AuthState = {
   tokenType: "",
   accessToken: "",
+  username: "",
   state: "uninitialized",
 };
 
@@ -118,11 +121,13 @@ export const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.accessToken = action.payload.session.id;
         state.tokenType = action.payload.tokenType;
+        state.username = action.payload.username;
         state.state = "fulfilled";
       })
       .addCase(login.rejected, (state) => {
         state.accessToken = "";
         state.tokenType = "";
+        state.username = "";
         state.state = "rejected";
       })
       .addCase(signup.pending, (state) => {
@@ -131,11 +136,13 @@ export const authSlice = createSlice({
       .addCase(signup.fulfilled, (state, action) => {
         state.accessToken = action.payload.session.id;
         state.tokenType = action.payload.tokenType;
+        state.username = action.payload.username;
         state.state = "fulfilled";
       })
       .addCase(signup.rejected, (state) => {
         state.accessToken = "";
         state.tokenType = "";
+        state.username = "";
         state.state = "rejected";
       })
       .addCase(signout.pending, (state) => {
@@ -144,6 +151,7 @@ export const authSlice = createSlice({
       .addCase(signout.fulfilled, (state) => {
         state.accessToken = "";
         state.tokenType = "";
+        state.username = "";
         state.state = "fulfilled";
       })
       .addCase(signout.rejected, (state) => {
