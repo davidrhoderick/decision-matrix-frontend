@@ -2,14 +2,26 @@ import { Link, useNavigate } from "react-router-dom";
 import { FC, useState } from "react";
 
 import { useDispatch } from "react-redux";
-import { useForm } from "react-hook-form";
-import { ErrorMessage } from "@hookform/error-message";
+import { Controller, useForm } from "react-hook-form";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { AppDispatch } from "@/redux/store";
 
 import { signup } from "@/redux/authSlice";
 
-import Title from "./Title";
+import AuthContainer from "./AuthContainer";
+import {
+  Alert,
+  Button,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Input,
+  Typography,
+} from "@mui/joy";
+
+const usernameMessage = "Please enter a valid username" as const;
+const passwordMessage = "Please enter a valid password" as const;
+const confirmPasswordMessage = "Password values must match" as const;
 
 type FormData = {
   username: string;
@@ -22,12 +34,7 @@ const Signup: FC = () => {
   const navigate = useNavigate();
   const [signupError, setSignupError] = useState("");
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    watch,
-  } = useForm<FormData>();
+  const { control, handleSubmit, watch } = useForm<FormData>();
 
   const [loading, setLoading] = useState(false);
 
@@ -53,16 +60,14 @@ const Signup: FC = () => {
     }
   );
 
-  const usernameMessage = "Please enter a valid username" as const;
-  const passwordMessage = "Please enter a valid password" as const;
-
   return (
-    <div>
-      <Title>Signup</Title>
+    <AuthContainer>
+      <Typography level={"h1"}>Signup</Typography>
 
-      <input
-        placeholder="username"
-        {...register("username", {
+      <Controller
+        control={control}
+        name={"username"}
+        rules={{
           minLength: { value: 3, message: usernameMessage },
           maxLength: { value: 31, message: usernameMessage },
           pattern: {
@@ -70,42 +75,65 @@ const Signup: FC = () => {
             message: usernameMessage,
           },
           required: { value: true, message: usernameMessage },
-        })}
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <FormControl error={!!error?.message}>
+            <FormLabel>Username</FormLabel>
+            <Input {...field} />
+            {error && (
+              <FormHelperText color={"danger"}>{error.message}</FormHelperText>
+            )}
+          </FormControl>
+        )}
       />
 
-      <ErrorMessage errors={errors} name="username" />
-
-      <input
-        placeholder="password"
-        type="password"
-        {...register("password", {
+      <Controller
+        control={control}
+        name={"password"}
+        rules={{
           minLength: { value: 6, message: passwordMessage },
           maxLength: { value: 255, message: passwordMessage },
           required: { value: true, message: passwordMessage },
-        })}
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <FormControl error={!!error?.message}>
+            <FormLabel>Password</FormLabel>
+            <Input {...field} type={"password"} />
+            {error && (
+              <FormHelperText color={"danger"}>{error.message}</FormHelperText>
+            )}
+          </FormControl>
+        )}
       />
 
-      <ErrorMessage errors={errors} name="password" />
-
-      <input
-        placeholder="confirm password"
-        type="password"
-        {...register("confirmPassword", {
+      <Controller
+        control={control}
+        name={"confirmPassword"}
+        rules={{
           validate: (value, { password }) =>
-            value === password || "Password values must match",
-        })}
+            value === password || confirmPasswordMessage,
+          required: { value: true, message: confirmPasswordMessage },
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <FormControl error={!!error?.message}>
+            <FormLabel>Password</FormLabel>
+            <Input {...field} type={"password"} />
+            {error && (
+              <FormHelperText color={"danger"}>{error.message}</FormHelperText>
+            )}
+          </FormControl>
+        )}
       />
+      {signupError && <Alert color={"danger"}>{signupError}</Alert>}
 
-      <ErrorMessage errors={errors} name="confirmPassword" />
-
-      <button onClick={onSubmit} disabled={loading}>
+      <Button onClick={onSubmit} disabled={loading}>
         Submit
-      </button>
+      </Button>
 
-      {signupError && <div>{signupError}</div>}
-
-      <Link to="/login">Login</Link>
-    </div>
+      <Button variant={"plain"} component={Link} to="/login">
+        Log in
+      </Button>
+    </AuthContainer>
   );
 };
 

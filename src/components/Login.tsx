@@ -1,15 +1,23 @@
 import { Link, useNavigate } from "react-router-dom";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
-import { useDispatch } from "react-redux";
-import { useForm } from "react-hook-form";
-import { ErrorMessage } from "@hookform/error-message";
+import { useDispatch, useSelector } from "react-redux";
+import { Controller, useForm } from "react-hook-form";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { AppDispatch } from "@/redux/store";
+import { AppDispatch, RootState } from "@/redux/store";
 
 import { login } from "@/redux/authSlice";
 
-import Title from "./Title";
+import {
+  Alert,
+  Button,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Input,
+  Typography,
+} from "@mui/joy";
+import AuthContainer from "./AuthContainer";
 
 type FormData = {
   username: string;
@@ -21,12 +29,17 @@ const Login: FC = () => {
   const navigate = useNavigate();
   const [loginError, setLoginError] = useState("");
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    watch,
-  } = useForm<FormData>();
+  const { tokenType, accessToken, username } = useSelector(
+    (state: RootState) => state.auth
+  );
+
+  useEffect(() => {
+    if (tokenType.length && accessToken.length && username.length) {
+      navigate("/");
+    }
+  }, [accessToken, tokenType, navigate, username]);
+
+  const { control, handleSubmit, watch } = useForm<FormData>();
 
   const [loading, setLoading] = useState(false);
 
@@ -53,12 +66,13 @@ const Login: FC = () => {
   const passwordMessage = "Please enter a valid password" as const;
 
   return (
-    <div>
-      <Title>Login</Title>
+    <AuthContainer>
+      <Typography level={"h1"}>Login</Typography>
 
-      <input
-        placeholder="username"
-        {...register("username", {
+      <Controller
+        control={control}
+        name={"username"}
+        rules={{
           minLength: { value: 3, message: usernameMessage },
           maxLength: { value: 31, message: usernameMessage },
           pattern: {
@@ -66,31 +80,47 @@ const Login: FC = () => {
             message: usernameMessage,
           },
           required: { value: true, message: usernameMessage },
-        })}
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <FormControl error={!!error?.message}>
+            <FormLabel>Username</FormLabel>
+            <Input {...field} />
+            {error && (
+              <FormHelperText color={"danger"}>{error.message}</FormHelperText>
+            )}
+          </FormControl>
+        )}
       />
 
-      <ErrorMessage errors={errors} name="username" />
-
-      <input
-        placeholder="password"
-        type="password"
-        {...register("password", {
+      <Controller
+        control={control}
+        name={"password"}
+        rules={{
           minLength: { value: 6, message: passwordMessage },
           maxLength: { value: 255, message: passwordMessage },
           required: { value: true, message: passwordMessage },
-        })}
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <FormControl error={!!error?.message}>
+            <FormLabel>Password</FormLabel>
+            <Input {...field} type={"password"} />
+            {error && (
+              <FormHelperText color={"danger"}>{error.message}</FormHelperText>
+            )}
+          </FormControl>
+        )}
       />
 
-      <ErrorMessage errors={errors} name="password" />
+      {loginError && <Alert color={"danger"}>{loginError}</Alert>}
 
-      <button onClick={onSubmit} disabled={loading}>
+      <Button onClick={onSubmit} disabled={loading}>
         Submit
-      </button>
+      </Button>
 
-      {loginError && <div>{loginError}</div>}
-
-      <Link to="/signup">Sign up</Link>
-    </div>
+      <Button variant={"plain"} component={Link} to="/signup">
+        Sign up
+      </Button>
+    </AuthContainer>
   );
 };
 
