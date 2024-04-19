@@ -3,18 +3,20 @@ import { FC, useMemo } from "react";
 import styled from "@emotion/styled";
 
 import BarChart from "./BarChart";
-import { useParams } from "react-router-dom";
-import { useGetMatrixByIdQuery } from "@/redux/matrixApi";
-import { Alert, Grid, Table } from "@mui/joy";
+import { Grid, Table } from "@mui/joy";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 const Totals: FC = () => {
-  const { id } = useParams();
-  const { data } = useGetMatrixByIdQuery({ id: id as string });
+  const {
+    choices: { list: choices },
+    factorsChoices: { matrix: factorsChoices },
+  } = useSelector((state: RootState) => state);
 
   const totals = useMemo(
     () =>
-      data?.choices.list.map((_choice, index) =>
-        data?.factorsChoices.matrix.reduce(
+      choices.map((_choice, index) =>
+        factorsChoices.reduce(
           (totals, factor) => {
             const min = totals[0];
             const max = totals[1];
@@ -28,7 +30,7 @@ const Totals: FC = () => {
           [0, 0]
         )
       ),
-    [data?.choices, data?.factorsChoices]
+    [choices, factorsChoices]
   );
 
   const max = useMemo(
@@ -41,18 +43,6 @@ const Totals: FC = () => {
     () => totals?.map((totals, index) => totals[1] === max && index),
     [totals, max]
   );
-
-  if (!data || !leaders || !totals || !max) {
-    return (
-      <Alert color="danger">
-        Oops! Something went wrong and we were unable to fetch your matrix.
-      </Alert>
-    );
-  }
-
-  const {
-    choices: { list: choices },
-  } = data;
 
   return (
     <Grid container alignItems={"center"}>
