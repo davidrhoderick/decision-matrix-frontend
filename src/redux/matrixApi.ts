@@ -2,16 +2,16 @@ import { matrixApiRaw } from "./matrixApiRaw";
 export * from "./matrixApiRaw";
 
 export const matrixApi = matrixApiRaw.enhanceEndpoints({
-  addTagTypes: ["Matrix", "Matrices"],
+  addTagTypes: ["Matrix"],
   endpoints: {
     getIndex: {
-      providesTags: ["Matrix"],
+      providesTags: [{ type: "Matrix", id: "LIST" }],
     },
     postMatrix: {
-      invalidatesTags: ['Matrix']
+      invalidatesTags: [{type:"Matrix", id: 'LIST' }],
     },
     deleteMatrixById: {
-      invalidatesTags: ['Matrix']
+      invalidatesTags: [{type:"Matrix", id: 'LIST' }],
     },
     getMatrixById: {
       providesTags: (_result, _error, arg) => [{ type: "Matrix", id: arg.id }],
@@ -19,6 +19,7 @@ export const matrixApi = matrixApiRaw.enhanceEndpoints({
     putMatrixById: {
       invalidatesTags: (_result, _error, arg) => [
         { type: "Matrix", id: arg.id },
+        { type: "Matrix", id: "LIST" },
       ],
     },
   },

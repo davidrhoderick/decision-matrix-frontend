@@ -1,20 +1,21 @@
 import { FC, MouseEvent, useState } from "react";
 
 import styled from "@emotion/styled";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { addChoice, removeChoice, changeChoice } from "@/redux/choicesSlice";
 import { addFactor, removeFactor, changeFactor } from "@/redux/factorsSlice";
 import { decrementFactor, incrementFactor } from "@/redux/factorsChoicesSlice";
+import { RootState } from "@/redux/store";
 
-import { Alert, Table as MuiTable } from "@mui/joy";
-
-import { useGetMatrixByIdQuery } from "@/redux/matrixApi";
-import { useParams } from "react-router-dom";
+import { Table as MuiTable } from "@mui/joy";
 
 const Table: FC = () => {
-  const { id } = useParams();
-  const { data } = useGetMatrixByIdQuery({ id: id as string });
+  const {
+    choices: { list: choices },
+    factors: { list: factors },
+    factorsChoices: { matrix: factorsChoices },
+  } = useSelector((state: RootState) => state);
 
   const dispatch = useDispatch();
 
@@ -34,20 +35,6 @@ const Table: FC = () => {
       dispatch(decrementFactor({ factor: factorIndex, choice: choiceIndex }));
     }
   };
-
-  if (!data) {
-    return (
-      <Alert color="danger">
-        Oops! Something went wrong and we were unable to fetch your matrix.
-      </Alert>
-    );
-  }
-
-  const {
-    choices: { list: choices },
-    factors: { list: factors },
-    factorsChoices: { matrix: factorsChoices },
-  } = data;
 
   return (
     <div style={{ position: "relative" }}>
@@ -108,21 +95,19 @@ const Table: FC = () => {
                   <Remove onClick={() => dispatch(removeFactor(factorIndex))} />
                 )}
               </th>
-              {factorsChoices[factorIndex].map(
-                (choiceFactor, choiceIndex) => (
-                  <td
-                    key={choiceIndex}
-                    onClick={(event) =>
-                      handleFactorChoiceClick(event, factorIndex, choiceIndex)
-                    }
-                    onContextMenu={(event) =>
-                      handleFactorChoiceClick(event, factorIndex, choiceIndex)
-                    }
-                  >
-                    {choiceFactor < 0 ? "?" : choiceFactor}
-                  </td>
-                )
-              )}
+              {factorsChoices[factorIndex].map((choiceFactor, choiceIndex) => (
+                <td
+                  key={choiceIndex}
+                  onClick={(event) =>
+                    handleFactorChoiceClick(event, factorIndex, choiceIndex)
+                  }
+                  onContextMenu={(event) =>
+                    handleFactorChoiceClick(event, factorIndex, choiceIndex)
+                  }
+                >
+                  {choiceFactor < 0 ? "?" : choiceFactor}
+                </td>
+              ))}
             </tr>
           ))}
           <tr>
