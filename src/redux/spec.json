@@ -1,5 +1,15 @@
 {
   "openapi": "3.0.3",
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authentication endpoints"
+    },
+    {
+      "name": "Matrices",
+      "description": "Endpoints for decision matrices"
+    }
+  ],
   "info": {
     "title": "Elysia Documentation",
     "description": "Development documentation",
@@ -31,6 +41,9 @@
           }
         },
         "operationId": "postSignup",
+        "tags": [
+          "Auth"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -77,6 +90,9 @@
           }
         },
         "operationId": "postLogin",
+        "tags": [
+          "Auth"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -101,6 +117,9 @@
     "/signout": {
       "post": {
         "operationId": "postSignout",
+        "tags": [
+          "Auth"
+        ],
         "responses": {
           "200": {}
         }
@@ -144,7 +163,10 @@
             }
           }
         },
-        "operationId": "getIndex"
+        "operationId": "getIndex",
+        "tags": [
+          "Matrices"
+        ]
       }
     },
     "/matrix": {
@@ -170,7 +192,10 @@
             }
           }
         },
-        "operationId": "postMatrix"
+        "operationId": "postMatrix",
+        "tags": [
+          "Matrices"
+        ]
       }
     },
     "/matrix/{id}": {
@@ -216,6 +241,9 @@
           }
         },
         "operationId": "getMatrixById",
+        "tags": [
+          "Matrices"
+        ],
         "parameters": [
           {
             "schema": {
@@ -260,6 +288,9 @@
           }
         },
         "operationId": "putMatrixById",
+        "tags": [
+          "Matrices"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -327,6 +358,9 @@
           }
         },
         "operationId": "deleteMatrixById",
+        "tags": [
+          "Matrices"
+        ],
         "parameters": [
           {
             "schema": {
@@ -387,12 +421,12 @@
                   },
                   {
                     "format": "date",
-                    "default": "2024-04-18T08:31:47.559Z",
+                    "default": "2024-04-18T12:41:26.503Z",
                     "type": "string"
                   },
                   {
                     "format": "date-time",
-                    "default": "2024-04-18T08:31:47.559Z",
+                    "default": "2024-04-18T12:41:26.503Z",
                     "type": "string"
                   }
                 ]

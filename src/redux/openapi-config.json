@@ -1,12 +1,8 @@
 {
   "schemaFile": "./spec.json",
   "apiFile": "./emptyApi.ts",
-  "outputFile": "./matrixApi.ts",
-  "hooks": {
-    "queries": true,
-    "lazyQueries": true,
-    "mutations": true
-  },
+  "outputFile": "./matrixApiRaw.ts",
+  "hooks": true,
   "filterEndpoints": [
     "getIndex",
     "postMatrix",
@@ -15,5 +11,5 @@
     "deleteMatrixById"
   ],
   "apiImport": "default",
-  "exportName": "matrixApi"
+  "exportName": "matrixApiRaw"
 }
