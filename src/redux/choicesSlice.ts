@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { matrixApi } from "./matrixApi";
 
 export interface ChoicesState {
   list: Array<string>;
@@ -26,6 +27,14 @@ export const choicesSlice = createSlice({
     ) => {
       state.list[action.payload.index] = action.payload.name;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addMatcher(
+      matrixApi.endpoints.getMatrixById.matchFulfilled,
+      (state, action) => {
+        state.list = action.payload.choices.list;
+      }
+    );
   },
 });
 

@@ -1,9 +1,9 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
 import auth from "./authSlice";
-// import choices from "./choicesSlice";
-// import factors from "./factorsSlice";
-// import factorsChoices from "./factorsChoicesSlice";
+import choices from "./choicesSlice";
+import factors from "./factorsSlice";
+import factorsChoices from "./factorsChoicesSlice";
 import storage from "redux-persist/lib/storage";
 import {
   FLUSH,
@@ -19,9 +19,9 @@ import {matrixApi} from "./matrixApi";
 const reducers = combineReducers({
   auth,
   [matrixApi.reducerPath]: matrixApi.reducer,
-  // choices,
-  // factors,
-  // factorsChoices,
+  choices,
+  factors,
+  factorsChoices,
 });
 
 const persistConfig = {

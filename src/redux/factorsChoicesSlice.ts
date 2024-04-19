@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { addFactor, removeFactor } from "./factorsSlice";
 import { addChoice, removeChoice } from "./choicesSlice";
+import { matrixApi } from "./matrixApi";
 
 export interface FactorsChoicesState {
   matrix: Array<Array<number>>;
@@ -50,6 +51,13 @@ export const factorsChoicesSlice = createSlice({
           factor.filter((_choice, index) => index !== action.payload)
         );
       });
+      
+    builder.addMatcher(
+      matrixApi.endpoints.getMatrixById.matchFulfilled,
+      (state, action) => {
+        state.matrix = action.payload.factorsChoices.matrix;
+      }
+    );
   },
 });
 
