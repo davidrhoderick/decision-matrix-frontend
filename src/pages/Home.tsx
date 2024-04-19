@@ -1,10 +1,14 @@
 import { useNavigate } from "react-router-dom";
-import { MouseEvent, useCallback, useEffect } from "react";
+import { MouseEvent, useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { signout } from "@/redux/authSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { useGetIndexQuery } from "@/redux/matrixApi";
+import {
+  useDeleteMatrixByIdMutation,
+  useGetIndexQuery,
+  usePostMatrixMutation,
+} from "@/redux/matrixApi";
 import { Button, Stack, Table, Typography } from "@mui/joy";
 import LoaderWrapper from "@/components/LoaderWrapper";
 import PageContainer from "@/components/PageContainer";
@@ -14,7 +18,8 @@ const Home = () => {
   const navigate = useNavigate();
   const { username } = useSelector((state: RootState) => state.auth);
 
-  const { data, isLoading, isError, error } = useGetIndexQuery();
+  const { data, isLoading, isError, error, isSuccess, isFetching } =
+    useGetIndexQuery();
 
   const handleSignout = useCallback(() => {
     dispatch(signout())
@@ -39,13 +44,37 @@ const Home = () => {
     [navigate]
   );
 
+  const [deleteMatrix] = useDeleteMatrixByIdMutation();
+
+  const [deleteLoadingIds, setDeleteLoadingIds] =
+    useState<Array<string> | null>(null);
+
   const handleDelete = useCallback(
     ({ event, id }: { event: MouseEvent<HTMLAnchorElement>; id: string }) => {
       event.stopPropagation();
-      console.log("delete", id);
+      setDeleteLoadingIds([...(deleteLoadingIds ?? []), id]);
+      deleteMatrix({ id });
     },
-    []
+    [deleteLoadingIds, deleteMatrix]
   );
+
+  useEffect(() => {
+    if (isSuccess) {
+      setDeleteLoadingIds(null);
+    }
+  }, [isSuccess]);
+
+  const [addMatrix, { isLoading: postMatrixLoading }] = usePostMatrixMutation();
+
+  const [newMatrixLoading, setNewMatrixLoading] = useState(false);
+
+  useEffect(() => {
+    if (postMatrixLoading || isFetching || isLoading) {
+      setNewMatrixLoading(true);
+    } else if (isSuccess) {
+      setNewMatrixLoading(false);
+    }
+  }, [isFetching, isLoading, isSuccess, postMatrixLoading]);
 
   return (
     <PageContainer>
@@ -60,6 +89,14 @@ const Home = () => {
               Sign out
             </Button>
           </Stack>
+
+          <Button
+            onClick={() => addMatrix()}
+            sx={{ alignSelf: "start" }}
+            loading={newMatrixLoading}
+          >
+            New Matrix
+          </Button>
 
           <Table size="lg">
             <thead>
@@ -81,6 +118,7 @@ const Home = () => {
                     <Button
                       color={"danger"}
                       onClick={(event) => handleDelete({ event, id })}
+                      loading={deleteLoadingIds?.includes(id)}
                     >
                       Delete
                     </Button>
