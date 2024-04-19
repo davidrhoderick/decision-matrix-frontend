@@ -6,7 +6,7 @@
       "description": "Authentication endpoints"
     },
     {
-      "name": "Matrices",
+      "name": "Matrix",
       "description": "Endpoints for decision matrices"
     }
   ],
@@ -165,7 +165,7 @@
         },
         "operationId": "getIndex",
         "tags": [
-          "Matrices"
+          "Matrix"
         ]
       }
     },
@@ -194,7 +194,7 @@
         },
         "operationId": "postMatrix",
         "tags": [
-          "Matrices"
+          "Matrix"
         ]
       }
     },
@@ -242,7 +242,7 @@
         },
         "operationId": "getMatrixById",
         "tags": [
-          "Matrices"
+          "Matrix"
         ],
         "parameters": [
           {
@@ -289,7 +289,7 @@
         },
         "operationId": "putMatrixById",
         "tags": [
-          "Matrices"
+          "Matrix"
         ],
         "requestBody": {
           "content": {
@@ -359,7 +359,7 @@
         },
         "operationId": "deleteMatrixById",
         "tags": [
-          "Matrices"
+          "Matrix"
         ],
         "parameters": [
           {
@@ -421,12 +421,12 @@
                   },
                   {
                     "format": "date",
-                    "default": "2024-04-18T12:41:26.503Z",
+                    "default": "2024-04-19T10:22:45.207Z",
                     "type": "string"
                   },
                   {
                     "format": "date-time",
-                    "default": "2024-04-18T12:41:26.503Z",
+                    "default": "2024-04-19T10:22:45.207Z",
                     "type": "string"
                   }
                 ]
