@@ -9,15 +9,13 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { login } from "@/redux/authSlice";
 
 import {
-  Alert,
   Button,
   FormControl,
   FormHelperText,
   FormLabel,
   Input,
-  Typography,
 } from "@mui/joy";
-import AuthContainer from "../components/AuthContainer";
+import AuthForm from "../components/AuthForm";
 
 type FormData = {
   username: string;
@@ -57,7 +55,7 @@ const Login: FC = () => {
       })
       .catch((error) => {
         setLoading(false);
-        setLoginError(error);
+        setLoginError(error.message);
         console.error(error);
       });
   });
@@ -66,9 +64,21 @@ const Login: FC = () => {
   const passwordMessage = "Please enter a valid password" as const;
 
   return (
-    <AuthContainer>
-      <Typography level={"h1"}>Login</Typography>
-
+    <AuthForm
+      title={"Login"}
+      onSubmit={onSubmit}
+      leftAction={
+        <Button type={"submit"} disabled={loading} fullWidth>
+          Submit
+        </Button>
+      }
+      rightAction={
+        <Button variant={"plain"} component={Link} to="/signup" fullWidth>
+          Sign up
+        </Button>
+      }
+      error={loginError}
+    >
       <Controller
         control={control}
         name={"username"}
@@ -110,17 +120,7 @@ const Login: FC = () => {
           </FormControl>
         )}
       />
-
-      {loginError && <Alert color={"danger"}>{loginError}</Alert>}
-
-      <Button onClick={onSubmit} disabled={loading}>
-        Submit
-      </Button>
-
-      <Button variant={"plain"} component={Link} to="/signup">
-        Sign up
-      </Button>
-    </AuthContainer>
+    </AuthForm>
   );
 };
 

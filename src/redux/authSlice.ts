@@ -44,8 +44,8 @@ export const login = createAsyncThunk<
     if (response.ok) {
       return response.json();
     }
-
-    const error = await response.text();
+    
+    const error = await response.json();
 
     return rejectWithValue(error);
   } catch (error) {
@@ -70,7 +70,7 @@ export const signup = createAsyncThunk<
       return response.json();
     }
 
-    const error = await response.text();
+    const error = await response.json();
 
     return rejectWithValue(error);
   } catch (error) {
@@ -100,7 +100,7 @@ export const signout = createAsyncThunk<boolean>(
         return true;
       }
 
-      const error = await response.text();
+      const error = await response.json();
 
       return rejectWithValue(error);
     } catch (error) {
