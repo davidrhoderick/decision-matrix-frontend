@@ -1,6 +1,5 @@
-import { FC, MouseEvent, useState } from "react";
+import { ChangeEvent, FC, MouseEvent, useState } from "react";
 
-import styled from "@emotion/styled";
 import { useDispatch, useSelector } from "react-redux";
 
 import { addChoice, removeChoice, changeChoice } from "@/redux/choicesSlice";
@@ -8,7 +7,8 @@ import { addFactor, removeFactor, changeFactor } from "@/redux/factorsSlice";
 import { decrementFactor, incrementFactor } from "@/redux/factorsChoicesSlice";
 import { RootState } from "@/redux/store";
 
-import { Table as MuiTable } from "@mui/joy";
+import { IconButton, Input, Table as MuiTable, Stack } from "@mui/joy";
+import { ArrowDown, ArrowRight, Plus, X } from "lucide-react";
 
 const Table: FC = () => {
   const {
@@ -36,169 +36,141 @@ const Table: FC = () => {
     }
   };
 
-  return (
-    <div style={{ position: "relative" }}>
-      <AxisTitle axis={"x"}>Choices</AxisTitle>
-      <AxisTitle axis={"y"}>Factors</AxisTitle>
+  const handleAddChoice = () => {
+    if (newChoice.length > 0) {
+      dispatch(addChoice(newChoice));
+      setNewChoice("");
+    }
+  };
 
-      <StyledTable>
-        <thead>
-          <tr>
-            <th></th>
-            {choices.map((choice, index) => (
-              <th key={index}>
-                <StyledInput
-                  value={choice}
-                  onChange={(event) =>
-                    dispatch(changeChoice({ name: event.target.value, index }))
-                  }
-                />{" "}
-                {choices.length > 1 && (
-                  <Remove onClick={() => dispatch(removeChoice(index))} />
-                )}
-              </th>
-            ))}
-            <th>
-              <StyledInput
-                value={newChoice}
-                onChange={(event) => setNewChoice(event.target.value)}
-                placeholder="Add choice"
-              />
-              <Add
-                onClick={() => {
-                  if (newChoice.length > 0) {
-                    dispatch(addChoice(newChoice));
-                    setNewChoice("");
-                  }
-                }}
+  const handleChangeChoice = (
+    event: ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => dispatch(changeChoice({ name: event.target.value, index }));
+
+  const handleRemoveChoice = (index: number) => dispatch(removeChoice(index));
+
+  const handleAddFactor = () => {
+    if (newFactor.length > 0) {
+      dispatch(addFactor(newFactor));
+      setNewFactor("");
+    }
+  };
+
+  const handleChangeFactor = (
+    event: ChangeEvent<HTMLInputElement>,
+    index: number
+  ) =>
+    dispatch(
+      changeFactor({
+        name: event.target.value,
+        index,
+      })
+    );
+
+  const handleRemoveFactor = (index: number) => () =>
+    dispatch(removeFactor(index));
+
+  return (
+    <MuiTable>
+      <thead>
+        <tr>
+          <th>
+            <Stack direction={"row"} justifyContent={"space-between"}>
+              <Stack alignItems={"center"}>
+                Factors <ArrowDown />
+              </Stack>
+              <Stack direction={"row"} alignItems={"center"}>
+                Choices <ArrowRight />
+              </Stack>
+            </Stack>
+          </th>
+          {choices.map((choice, index) => (
+            <th key={index}>
+              <Input
+                size={"sm"}
+                variant={"plain"}
+                value={choice}
+                onChange={(event) => handleChangeChoice(event, index)}
+                endDecorator={
+                  choices.length > 1 && (
+                    <IconButton onClick={() => handleRemoveChoice(index)}>
+                      <X />
+                    </IconButton>
+                  )
+                }
               />
             </th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {factors.map((factor, factorIndex) => (
-            <tr key={factorIndex}>
-              <th>
-                <StyledInput
-                  value={factor}
-                  onChange={(event) =>
-                    dispatch(
-                      changeFactor({
-                        name: event.target.value,
-                        index: factorIndex,
-                      })
-                    )
-                  }
-                />{" "}
-                {factors.length > 1 && (
-                  <Remove onClick={() => dispatch(removeFactor(factorIndex))} />
-                )}
-              </th>
-              {factorsChoices[factorIndex].map((choiceFactor, choiceIndex) => (
-                <td
-                  key={choiceIndex}
-                  onClick={(event) =>
-                    handleFactorChoiceClick(event, factorIndex, choiceIndex)
-                  }
-                  onContextMenu={(event) =>
-                    handleFactorChoiceClick(event, factorIndex, choiceIndex)
-                  }
-                >
-                  {choiceFactor < 0 ? "?" : choiceFactor}
-                </td>
-              ))}
-            </tr>
           ))}
-          <tr>
-            <td>
-              <StyledInput
-                value={newFactor}
-                onChange={(event) => setNewFactor(event.target.value)}
-                placeholder="Add factor"
+          <th>
+            <Input
+              size={"sm"}
+              variant={"plain"}
+              value={newChoice}
+              onChange={(event) => setNewChoice(event.target.value)}
+              placeholder="Add choice"
+              endDecorator={
+                <IconButton onClick={handleAddChoice}>
+                  <Plus />
+                </IconButton>
+              }
+            />
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {factors.map((factor, factorIndex) => (
+          <tr key={factorIndex}>
+            <th>
+              <Input
+                size={"sm"}
+                variant={"plain"}
+                value={factor}
+                onChange={(event) => handleChangeFactor(event, factorIndex)}
+                endDecorator={
+                  factors.length > 1 && (
+                    <IconButton onClick={() => handleRemoveFactor(factorIndex)}>
+                      <X />
+                    </IconButton>
+                  )
+                }
               />
-              <Add
-                onClick={() => {
-                  if (newFactor.length > 0) {
-                    dispatch(addFactor(newFactor));
-                    setNewFactor("");
-                  }
-                }}
-              />
-            </td>
+            </th>
+            {factorsChoices[factorIndex].map((choiceFactor, choiceIndex) => (
+              <td
+                key={choiceIndex}
+                onClick={(event) =>
+                  handleFactorChoiceClick(event, factorIndex, choiceIndex)
+                }
+                onContextMenu={(event) =>
+                  handleFactorChoiceClick(event, factorIndex, choiceIndex)
+                }
+              >
+                {choiceFactor < 0 ? "?" : choiceFactor}
+              </td>
+            ))}
           </tr>
-        </tbody>
-      </StyledTable>
-    </div>
+        ))}
+        <tr>
+          <td>
+            <Input
+              size={"sm"}
+              variant={"plain"}
+              value={newFactor}
+              onChange={(event) => setNewFactor(event.target.value)}
+              placeholder="Add factor"
+              endDecorator={
+                <IconButton onClick={handleAddFactor}>
+                  <Plus />
+                </IconButton>
+              }
+            />
+          </td>
+        </tr>
+      </tbody>
+    </MuiTable>
   );
 };
 
 export default Table;
-
-const StyledTable = styled(MuiTable)`
-  // TODO Fix this spacing
-  margin: 1rem 2rem 1rem 4rem;
-  display: inline-block;
-
-  th,
-  td {
-    padding: 1rem;
-    text-align: center;
-    // border: 1px solid #222;
-    user-select: none;
-    white-space: nowrap;
-  }
-
-  td {
-    cursor: pointer;
-  }
-`;
-
-const AxisTitle = styled.h2`
-  margin: 1rem 2rem;
-
-  ${(props: { axis: "x" | "y" }) =>
-    props.axis === "y"
-      ? `
-    transform: rotate(-90deg) translateX(-50%);
-    position: absolute;
-    margin: 0;
-  `
-      : `margin-left: 6rem;`}
-`;
-
-const Add = styled.button`
-  outline: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 2rem;
-  vertical-align: sub;
-
-  :after {
-    content: "\\002B";
-    display: inline-block;
-  }
-`;
-
-const Remove = styled.button`
-  outline: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 2rem;
-  vertical-align: sub;
-
-  :after {
-    content: "\\00D7";
-    display: inline-block;
-  }
-`;
-
-const StyledInput = styled.input`
-  outline: none;
-  border: none;
-  padding-bottom: 0.375rem;
-  border-bottom: 1px solid #222;
-  width: 120px;
-`;

@@ -73,7 +73,7 @@ const Matrix = () => {
       </Button>
 
       <LoaderWrapper isLoading={isLoading}>
-        <Stack direction={"row"} spacing={3} alignItems={"center"}>
+        <Stack direction={"row"} spacing={3} alignItems={"center"} mb={3}>
           <Input
             name={"title"}
             value={name}
@@ -82,9 +82,15 @@ const Matrix = () => {
             size={"lg"}
             variant={"plain"}
             disabled={updateMatrixLoading}
+            sx={(theme) => ({
+              ...theme.typography.h1,
+              lineHeight: "initial",
+              pt: 1,
+            })}
           />
           <Button
             onClick={save}
+            size={"lg"}
             loading={updateMatrixLoading}
             sx={{ alignItems: "end" }}
           >
