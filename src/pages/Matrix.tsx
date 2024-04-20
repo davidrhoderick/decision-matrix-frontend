@@ -9,7 +9,13 @@ import {
 import { RootState } from "@/redux/store";
 import { Button, Input, Stack } from "@mui/joy";
 import { ChevronLeft, Save } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import {
+  ChangeEvent,
+  KeyboardEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 
@@ -42,6 +48,18 @@ const Matrix = () => {
     });
   }, [choices, data, factors, factorsChoices, id, name, updateMatrix]);
 
+  const handleTitleChange = (event: ChangeEvent<HTMLInputElement>) =>
+    setName(event.target.value);
+
+  const handleTitleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Enter") {
+      updateMatrix({
+        id: id!,
+        matrix: { ...data!, name, choices, factors, factorsChoices },
+      });
+    }
+  };
+
   return (
     <PageContainer>
       <Button
@@ -57,8 +75,10 @@ const Matrix = () => {
       <LoaderWrapper isLoading={isLoading}>
         <Stack direction={"row"} spacing={3} alignItems={"center"}>
           <Input
+            name={"title"}
             value={name}
-            onChange={(event) => setName(event.target.value)}
+            onChange={handleTitleChange}
+            onKeyDown={handleTitleKeyDown}
             size={"lg"}
             variant={"plain"}
             disabled={updateMatrixLoading}
