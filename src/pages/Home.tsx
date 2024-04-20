@@ -13,6 +13,7 @@ import {
 import { Button, Sheet, Stack, Table, Typography } from "@mui/joy";
 import LoaderWrapper from "@/components/LoaderWrapper";
 import PageContainer from "@/components/PageContainer";
+import ModeToggle from "@/components/ModeToggle";
 
 const Home = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -80,7 +81,16 @@ const Home = () => {
   return (
     <PageContainer>
       <Stack spacing={2}>
-        <Typography level={"h1"}>Decision Matrix</Typography>
+        <Stack
+          direction={"row"}
+          alignItems={"start"}
+          justifyContent={"space-between"}
+          mb={2}
+        >
+          <Typography level={"h1"}>Decision Matrix</Typography>
+
+          <ModeToggle />
+        </Stack>
 
         <LoaderWrapper isLoading={isLoading}>
           <Stack

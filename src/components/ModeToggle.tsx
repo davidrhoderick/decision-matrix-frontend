@@ -1,17 +1,25 @@
-import { useColorScheme } from '@mui/joy/styles';
-import Button from '@mui/joy/Button';
+import { useColorScheme } from "@mui/joy/styles";
+import { Moon } from "lucide-react";
+import { Switch } from "@mui/joy";
 
 const ModeToggle = () => {
   const { mode, setMode } = useColorScheme();
   return (
-    <Button
-      variant="outlined"
-      color="neutral"
-      onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')}
-    >
-      {mode === 'dark' ? 'Turn light' : 'Turn dark'}
-    </Button>
+    <Switch
+      size="lg"
+      checked={mode === "dark"}
+      onClick={() => setMode(mode === "dark" ? "light" : "dark")}
+      slotProps={{
+        input: { "aria-label": "Dark mode" },
+        thumb: {
+          children: <Moon />,
+        },
+      }}
+      sx={{
+        "--Switch-thumbSize": "16px",
+      }}
+    />
   );
-}
+};
 
 export default ModeToggle;

@@ -19,6 +19,7 @@ import {
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { useMediaQuery } from "@mui/material";
+import ModeToggle from "@/components/ModeToggle";
 
 const Matrix = () => {
   const { id } = useParams();
@@ -66,16 +67,25 @@ const Matrix = () => {
 
   return (
     <PageContainer>
-      <Button
-        variant="plain"
-        component={Link}
-        to={"/"}
-        sx={{ alignItems: "end", marginBottom: 2 }}
-        size={mobile ? "sm" : "md"}
+      <Stack
+        direction={"row"}
+        alignItems={"start"}
+        justifyContent={"space-between"}
+        mb={2}
       >
-        <ChevronLeft />
-        Back
-      </Button>
+        <Button
+          variant="plain"
+          component={Link}
+          to={"/"}
+          sx={{ alignItems: "end" }}
+          size={mobile ? "sm" : "md"}
+        >
+          <ChevronLeft />
+          Back
+        </Button>
+
+        <ModeToggle />
+      </Stack>
 
       <LoaderWrapper isLoading={isLoading}>
         <Stack
