@@ -5,11 +5,12 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { signout } from "@/redux/authSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import {
+  Matrix,
   useDeleteMatrixByIdMutation,
   useGetIndexQuery,
   usePostMatrixMutation,
 } from "@/redux/matrixApi";
-import { Button, Stack, Table, Typography } from "@mui/joy";
+import { Button, Sheet, Stack, Table, Typography } from "@mui/joy";
 import LoaderWrapper from "@/components/LoaderWrapper";
 import PageContainer from "@/components/PageContainer";
 
@@ -82,7 +83,11 @@ const Home = () => {
         <Typography level={"h1"}>Decision Matrix</Typography>
 
         <LoaderWrapper isLoading={isLoading}>
-          <Stack direction={"row"} alignItems={"start"} spacing={2}>
+          <Stack
+            direction={{ xs: "column", md: "row" }}
+            alignItems={"start"}
+            spacing={2}
+          >
             <Typography level={"h2"}>Welcome {username}!</Typography>
 
             <Button onClick={handleSignout} variant={"soft"} color="neutral">
@@ -91,42 +96,61 @@ const Home = () => {
           </Stack>
 
           <Button
-            onClick={() => addMatrix()}
+            onClick={() =>
+              addMatrix().then(
+                (result) =>
+                  (result as { data: Matrix })?.data?.id &&
+                  navigate(`/matrix/${(result as { data: Matrix }).data.id}`)
+              )
+            }
             sx={{ alignSelf: "start" }}
             loading={newMatrixLoading}
           >
             New Matrix
           </Button>
 
-          <Table size="lg">
-            <thead>
-              <tr>
-                <th>Your Decisions</th>
-                <th />
-              </tr>
-            </thead>
-
-            <tbody>
-              {data?.map(({ id, name }) => (
-                <tr
-                  key={id}
-                  onClick={() => navigateToMatrix(id)}
-                  style={{ cursor: "pointer" }}
-                >
-                  <td>{name}</td>
-                  <td align="right">
-                    <Button
-                      color={"danger"}
-                      onClick={(event) => handleDelete({ event, id })}
-                      loading={deleteLoadingIds?.includes(id)}
-                    >
-                      Delete
-                    </Button>
-                  </td>
+          <Sheet sx={{ overflow: "auto", mx: -3 }}>
+            <Table
+              size="lg"
+              variant={"plain"}
+              sx={{
+                "& tr > *:first-child": {
+                  position: "sticky",
+                  left: 0,
+                  zIndex: 1,
+                },
+              }}
+            >
+              <thead>
+                <tr>
+                  <th>Your Decisions</th>
+                  <th style={{ width: "80px" }} />
                 </tr>
-              ))}
-            </tbody>
-          </Table>
+              </thead>
+
+              <tbody>
+                {data?.map(({ id, name }) => (
+                  <tr
+                    key={id}
+                    onClick={() => navigateToMatrix(id)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <td>{name}</td>
+                    <td align="right">
+                      <Button
+                        size={"sm"}
+                        color={"danger"}
+                        onClick={(event) => handleDelete({ event, id })}
+                        loading={deleteLoadingIds?.includes(id)}
+                      >
+                        Delete
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </Sheet>
         </LoaderWrapper>
       </Stack>
     </PageContainer>

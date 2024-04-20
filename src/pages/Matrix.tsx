@@ -7,7 +7,7 @@ import {
   usePutMatrixByIdMutation,
 } from "@/redux/matrixApi";
 import { RootState } from "@/redux/store";
-import { Button, Input, Stack } from "@mui/joy";
+import { Button, Input, Stack, useTheme } from "@mui/joy";
 import { ChevronLeft, Save } from "lucide-react";
 import {
   ChangeEvent,
@@ -18,6 +18,7 @@ import {
 } from "react";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
+import { useMediaQuery } from "@mui/material";
 
 const Matrix = () => {
   const { id } = useParams();
@@ -27,7 +28,7 @@ const Matrix = () => {
   });
 
   const [updateMatrix, { isLoading: updateMatrixLoading }] =
-    usePutMatrixByIdMutation();
+    usePutMatrixByIdMutation({ fixedCacheKey: "update-matrix" });
 
   const { choices, factors, factorsChoices } = useSelector(
     (state: RootState) => state
@@ -60,6 +61,9 @@ const Matrix = () => {
     }
   };
 
+  const theme = useTheme();
+  const mobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
     <PageContainer>
       <Button
@@ -67,30 +71,37 @@ const Matrix = () => {
         component={Link}
         to={"/"}
         sx={{ alignItems: "end", marginBottom: 2 }}
+        size={mobile ? "sm" : "md"}
       >
         <ChevronLeft />
         Back
       </Button>
 
       <LoaderWrapper isLoading={isLoading}>
-        <Stack direction={"row"} spacing={3} alignItems={"center"} mb={3}>
+        <Stack
+          direction={{ xs: "column", md: "row" }}
+          spacing={3}
+          alignItems={{ xs: "start", md: "center" }}
+          mb={3}
+        >
           <Input
             name={"title"}
             value={name}
             onChange={handleTitleChange}
             onKeyDown={handleTitleKeyDown}
-            size={"lg"}
+            size={mobile ? "sm" : "lg"}
             variant={"plain"}
             disabled={updateMatrixLoading}
             sx={(theme) => ({
-              ...theme.typography.h1,
+              ...(mobile ? theme.typography.h3 : theme.typography.h1),
               lineHeight: "initial",
               pt: 1,
+              maxWidth: "100%",
             })}
           />
           <Button
             onClick={save}
-            size={"lg"}
+            size={mobile ? "sm" : "lg"}
             loading={updateMatrixLoading}
             sx={{ alignItems: "end" }}
           >

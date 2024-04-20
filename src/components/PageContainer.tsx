@@ -6,7 +6,8 @@ const PageContainer: FC<{ children: ReactNode }> = ({ children }) => (
     sx={(theme) => ({
       background: theme.palette.background.backdrop,
       minHeight: "100vh",
-      p: 3,
+      py: 3,
+      px: { xs: 0, md: 3 },
     })}
   >
     <Container

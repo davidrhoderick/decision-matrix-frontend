@@ -7,8 +7,18 @@ import { addFactor, removeFactor, changeFactor } from "@/redux/factorsSlice";
 import { decrementFactor, incrementFactor } from "@/redux/factorsChoicesSlice";
 import { RootState } from "@/redux/store";
 
-import { IconButton, Input, Table as MuiTable, Stack } from "@mui/joy";
+import {
+  IconButton,
+  Input,
+  Table as MuiTable,
+  Sheet,
+  Stack,
+  Typography,
+  useTheme,
+} from "@mui/joy";
 import { ArrowDown, ArrowRight, Plus, X } from "lucide-react";
+import { useMediaQuery } from "@mui/material";
+import { usePutMatrixByIdMutation } from "@/redux/matrixApiRaw";
 
 const Table: FC = () => {
   const {
@@ -18,6 +28,10 @@ const Table: FC = () => {
   } = useSelector((state: RootState) => state);
 
   const dispatch = useDispatch();
+
+  const [, { isLoading }] = usePutMatrixByIdMutation({
+    fixedCacheKey: "update-matrix",
+  });
 
   const [newChoice, setNewChoice] = useState("");
   const [newFactor, setNewFactor] = useState("");
@@ -68,108 +82,141 @@ const Table: FC = () => {
       })
     );
 
-  const handleRemoveFactor = (index: number) => () =>
-    dispatch(removeFactor(index));
+  const handleRemoveFactor = (index: number) => dispatch(removeFactor(index));
+
+  const theme = useTheme();
+  const mobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
-    <MuiTable>
-      <thead>
-        <tr>
-          <th>
-            <Stack direction={"row"} justifyContent={"space-between"}>
-              <Stack alignItems={"center"}>
-                Factors <ArrowDown />
+    <Sheet sx={{ overflow: "auto", mx: { xs: -3, md: 0 } }}>
+      <MuiTable
+        size={mobile ? "sm" : "md"}
+        variant="plain"
+        sx={{
+          "& tr > *:first-child": {
+            position: "sticky",
+            left: 0,
+            zIndex: 1,
+          },
+          "& td": {
+            py: 2,
+          },
+        }}
+      >
+        <thead>
+          <tr>
+            <th style={{ width: "180px" }}>
+              <Stack direction={"row"} justifyContent={"space-between"}>
+                <Stack alignItems={"center"}>
+                  Factors <ArrowDown />
+                </Stack>
+                <Stack direction={"row"} alignItems={"center"}>
+                  Choices <ArrowRight />
+                </Stack>
               </Stack>
-              <Stack direction={"row"} alignItems={"center"}>
-                Choices <ArrowRight />
-              </Stack>
-            </Stack>
-          </th>
-          {choices.map((choice, index) => (
-            <th key={index}>
-              <Input
-                size={"sm"}
-                variant={"plain"}
-                value={choice}
-                onChange={(event) => handleChangeChoice(event, index)}
-                endDecorator={
-                  choices.length > 1 && (
-                    <IconButton onClick={() => handleRemoveChoice(index)}>
-                      <X />
-                    </IconButton>
-                  )
-                }
-              />
             </th>
-          ))}
-          <th>
-            <Input
-              size={"sm"}
-              variant={"plain"}
-              value={newChoice}
-              onChange={(event) => setNewChoice(event.target.value)}
-              placeholder="Add choice"
-              endDecorator={
-                <IconButton onClick={handleAddChoice}>
-                  <Plus />
-                </IconButton>
-              }
-            />
-          </th>
-        </tr>
-      </thead>
-
-      <tbody>
-        {factors.map((factor, factorIndex) => (
-          <tr key={factorIndex}>
-            <th>
-              <Input
-                size={"sm"}
-                variant={"plain"}
-                value={factor}
-                onChange={(event) => handleChangeFactor(event, factorIndex)}
-                endDecorator={
-                  factors.length > 1 && (
-                    <IconButton onClick={() => handleRemoveFactor(factorIndex)}>
-                      <X />
-                    </IconButton>
-                  )
-                }
-              />
-            </th>
-            {factorsChoices[factorIndex].map((choiceFactor, choiceIndex) => (
-              <td
-                key={choiceIndex}
-                onClick={(event) =>
-                  handleFactorChoiceClick(event, factorIndex, choiceIndex)
-                }
-                onContextMenu={(event) =>
-                  handleFactorChoiceClick(event, factorIndex, choiceIndex)
-                }
-              >
-                {choiceFactor < 0 ? "?" : choiceFactor}
-              </td>
+            {choices.map((choice, index) => (
+              <th key={index} style={{ width: "140px" }}>
+                <Input
+                  size={"sm"}
+                  variant={"plain"}
+                  value={choice}
+                  onChange={(event) => handleChangeChoice(event, index)}
+                  endDecorator={
+                    choices.length > 1 && (
+                      <IconButton
+                        onClick={() => handleRemoveChoice(index)}
+                        size={mobile ? "sm" : "md"}
+                        disabled={isLoading}
+                      >
+                        <X />
+                      </IconButton>
+                    )
+                  }
+                  disabled={isLoading}
+                />
+              </th>
             ))}
+            <th style={{ width: "140px" }}>
+              <Input
+                size={"sm"}
+                variant={"plain"}
+                value={newChoice}
+                onChange={(event) => setNewChoice(event.target.value)}
+                placeholder="Add choice"
+                endDecorator={
+                  <IconButton onClick={handleAddChoice} disabled={isLoading}>
+                    <Plus />
+                  </IconButton>
+                }
+                disabled={isLoading}
+              />
+            </th>
           </tr>
-        ))}
-        <tr>
-          <td>
-            <Input
-              size={"sm"}
-              variant={"plain"}
-              value={newFactor}
-              onChange={(event) => setNewFactor(event.target.value)}
-              placeholder="Add factor"
-              endDecorator={
-                <IconButton onClick={handleAddFactor}>
-                  <Plus />
-                </IconButton>
-              }
-            />
-          </td>
-        </tr>
-      </tbody>
-    </MuiTable>
+        </thead>
+
+        <tbody>
+          {factors.map((factor, factorIndex) => (
+            <tr key={factorIndex}>
+              <th>
+                <Input
+                  size={"sm"}
+                  variant={"plain"}
+                  value={factor}
+                  onChange={(event) => handleChangeFactor(event, factorIndex)}
+                  endDecorator={
+                    factors.length > 1 && (
+                      <IconButton
+                        onClick={() => handleRemoveFactor(factorIndex)}
+                        disabled={isLoading}
+                      >
+                        <X />
+                      </IconButton>
+                    )
+                  }
+                  disabled={isLoading}
+                />
+              </th>
+              {factorsChoices[factorIndex].map((choiceFactor, choiceIndex) => (
+                <td
+                  style={{ textAlign: "center", cursor: "pointer" }}
+                  key={choiceIndex}
+                  onClick={(event) =>
+                    !isLoading &&
+                    handleFactorChoiceClick(event, factorIndex, choiceIndex)
+                  }
+                  onContextMenu={(event) =>
+                    !isLoading &&
+                    handleFactorChoiceClick(event, factorIndex, choiceIndex)
+                  }
+                >
+                  <Typography fontWeight={"bold"} fontSize={"md"}>
+                    {choiceFactor < 0 ? "?" : choiceFactor}
+                  </Typography>
+                </td>
+              ))}
+            </tr>
+          ))}
+          <tr>
+            <td>
+              <Input
+                size={"sm"}
+                variant={"plain"}
+                value={newFactor}
+                onChange={(event) => setNewFactor(event.target.value)}
+                placeholder="Add factor"
+                endDecorator={
+                  <IconButton onClick={handleAddFactor} disabled={isLoading}>
+                    <Plus />
+                  </IconButton>
+                }
+                disabled={isLoading}
+              />
+            </td>
+          </tr>
+        </tbody>
+      </MuiTable>
+    </Sheet>
   );
 };
 

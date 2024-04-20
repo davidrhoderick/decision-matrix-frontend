@@ -1,6 +1,5 @@
-import styled from "@emotion/styled";
-import { CSSProperties, FC } from "react";
-import colors from "../lib/colors";
+import { FC } from "react";
+import { Stack, Box } from "@mui/joy";
 
 type Props = {
   totals: Array<number | string>;
@@ -8,45 +7,20 @@ type Props = {
 };
 
 const BarChart: FC<Props> = ({ totals, max }) => (
-  <Bar>
+  <Stack direction={"column-reverse"} width={"2rem"} height={"15rem"}>
     {[...Array(max)].map((_value, index) => {
-      if (index < Number(totals[0])) {
-        return <Filled key={index} barColor={colors.body} />;
-      } else if (index < Number(totals[1])) {
-        return <Fuzzy key={index} barColor={colors.grey} />;
-      } else {
-        return <Empty key={index} barColor={colors.bg} />;
-      }
+      const backgroundColor =
+        index < Number(totals[0])
+          ? "primary.700"
+          : index < Number(totals[1])
+          ? "primary.200"
+          : "background.body";
+
+      return (
+        <Box flex={1} height={"1rem"} key={index} sx={{ backgroundColor }} />
+      );
     })}
-  </Bar>
+  </Stack>
 );
 
 export default BarChart;
-
-const Bar = styled.div`
-  display: flex;
-  width: 2rem;
-  height: 15rem;
-  flex-direction: column-reverse;
-`;
-
-const Filled = styled.div`
-  background: ${(props: { barColor: CSSProperties["background"] }) =>
-    props.barColor};
-  flex: 1;
-  height: 1rem;
-`;
-
-const Fuzzy = styled.div`
-  background: ${(props: { barColor: CSSProperties["background"] }) =>
-    props.barColor};
-  flex: 1;
-  height: 1rem;
-`;
-
-const Empty = styled.div`
-  background: ${(props: { barColor: CSSProperties["background"] }) =>
-    props.barColor};
-  flex: 1;
-  height: 1rem;
-`;

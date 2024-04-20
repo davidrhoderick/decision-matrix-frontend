@@ -1,9 +1,7 @@
 import { FC, useMemo } from "react";
 
-import styled from "@emotion/styled";
-
 import BarChart from "./BarChart";
-import { Grid, Table } from "@mui/joy";
+import { Grid, Stack, Table, Typography } from "@mui/joy";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 
@@ -45,15 +43,15 @@ const Totals: FC = () => {
   );
 
   return (
-    <Grid container alignItems={"center"}>
+    <Grid container alignItems={"center"} mt={3}>
       <Grid xs={12} md={4}>
-        <Table>
+        <Table sx={{ fontWeight: "bold" }}>
           <tbody>
             {choices.map((choice, index) => (
               <tr key={index}>
-                <th>
+                <td>
                   {choice} {leaders.includes(index) && `⭐`}
-                </th>
+                </td>
                 <td>
                   {totals[index]?.reduce((string, total) => {
                     if (string.length === 0) {
@@ -72,46 +70,34 @@ const Totals: FC = () => {
       </Grid>
 
       <Grid xs={12} md={8}>
-        <BarCharts>
+        <Stack direction={"row"} mt={3}>
           {choices.map((choice, index) => (
-            <BarChartContainer key={index}>
+            <Stack
+              key={index}
+              mr={2}
+              flex={1}
+              alignItems={"center"}
+              sx={{
+                h2: {
+                  mt: 2,
+                },
+                "&:nth-of-type(even) h2": {
+                  mt: 5,
+                },
+              }}
+            >
               {totals.length === choices.length && (
                 <BarChart totals={totals[index]} max={max} />
               )}
-              <h2>{choice}</h2>
-            </BarChartContainer>
+              <Typography level={"h4"} component={"h2"}>
+                {choice}
+              </Typography>
+            </Stack>
           ))}
-        </BarCharts>
+        </Stack>
       </Grid>
     </Grid>
   );
 };
 
 export default Totals;
-
-const BarCharts = styled.div`
-  margin: 1rem 4rem;
-  display: flex;
-`;
-
-const BarChartContainer = styled.div`
-  position: relative;
-  margin-right: 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 0;
-  flex: 1;
-
-  &:nth-of-type(even) {
-    h2 {
-      margin-top: 2.5rem;
-    }
-  }
-
-  h2 {
-    font-size: 1rem;
-    text-align: center;
-    white-space: nowrap;
-  }
-`;
