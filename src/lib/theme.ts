@@ -58,6 +58,9 @@ const theme = extendTheme({
           "700": "#a16207",
           "800": "#854d0e",
           "900": "#713f12"
+        },
+        "background": {
+          "backdrop": 'rgba(var(--joy-palette-primary-darkChannel, 11, 13, 14) / 0.90)'
         }
       }
     },
@@ -122,6 +125,9 @@ const theme = extendTheme({
           "700": "#3f3f46",
           "800": "#27272a",
           "900": "#18181b"
+        },
+        "background": {
+          "backdrop": 'rgba(var(--joy-palette-primary-darkChannel, 11, 13, 14) / 0.25)'
         }
       }
     }

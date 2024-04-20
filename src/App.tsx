@@ -8,8 +8,9 @@ import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
-import { CssBaseline } from "@mui/joy";
+import { CssBaseline, CssVarsProvider } from "@mui/joy";
 import Matrix from "@/pages/Matrix";
+import theme from "./lib/theme";
 
 // eslint-disable-next-line prefer-const
 let persistor = persistStore(store);
@@ -28,9 +29,9 @@ const router = createBrowserRouter([
     element: <Signup />,
   },
   {
-    path: '/matrix/:id',
-    element: <Matrix />
-  }
+    path: "/matrix/:id",
+    element: <Matrix />,
+  },
 ]);
 
 const App = () => (
@@ -38,7 +39,9 @@ const App = () => (
     <PersistGate loading={null} persistor={persistor}>
       <CssBaseline />
 
-      <RouterProvider router={router} />
+      <CssVarsProvider theme={theme}>
+        <RouterProvider router={router} />
+      </CssVarsProvider>
     </PersistGate>
   </Provider>
 );
