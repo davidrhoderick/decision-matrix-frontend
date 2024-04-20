@@ -2,25 +2,81 @@ import { matrixApiRaw } from "./matrixApiRaw";
 export * from "./matrixApiRaw";
 
 export const matrixApi = matrixApiRaw.enhanceEndpoints({
-  addTagTypes: ["Matrix"],
   endpoints: {
-    getIndex: {
-      providesTags: [{ type: "Matrix", id: "LIST" }],
-    },
     postMatrix: {
-      invalidatesTags: [{type:"Matrix", id: 'LIST' }],
+      onQueryStarted: async (_args, { dispatch, queryFulfilled }) => {
+        try {
+          const { data: newMatrix } = await queryFulfilled;
+
+          dispatch(
+            matrixApi.util.updateQueryData(
+              "getIndex",
+              undefined,
+              (draftMatrices) => {
+                draftMatrices.push(newMatrix);
+              }
+            )
+          );
+        } catch (error) {
+          console.error(error);
+        }
+      },
     },
     deleteMatrixById: {
-      invalidatesTags: [{type:"Matrix", id: 'LIST' }],
-    },
-    getMatrixById: {
-      providesTags: (_result, _error, arg) => [{ type: "Matrix", id: arg.id }],
+      onQueryStarted: async ({ id }, { dispatch, queryFulfilled }) => {
+        try {
+          await queryFulfilled;
+
+          dispatch(
+            matrixApi.util.updateQueryData(
+              "getIndex",
+              undefined,
+              (draftMatrices) =>
+                draftMatrices.filter((matrix) => id !== matrix.id)
+            )
+          );
+
+          dispatch(
+            matrixApi.util.updateQueryData(
+              "getMatrixById",
+              { id },
+              () => undefined
+            )
+          );
+        } catch (error) {
+          console.error(error);
+        }
+      },
     },
     putMatrixById: {
-      invalidatesTags: (_result, _error, arg) => [
-        { type: "Matrix", id: arg.id },
-        { type: "Matrix", id: "LIST" },
-      ],
+      onQueryStarted: async ({ id }, { dispatch, queryFulfilled }) => {
+        try {
+          const {
+            data: updateResult,
+          } = await queryFulfilled;
+
+          dispatch(
+            matrixApi.util.updateQueryData(
+              "getIndex",
+              undefined,
+              (draftMatrices) =>
+                draftMatrices.map((matrix) =>
+                  matrix.id === id ? { name: updateResult.name, id: updateResult.id } : matrix
+                )
+            )
+          );
+
+          dispatch(
+            matrixApi.util.updateQueryData(
+              "getMatrixById",
+              { id },
+              () => updateResult
+            )
+          );
+        } catch (error) {
+          console.error(error);
+        }
+      },
     },
   },
 });
