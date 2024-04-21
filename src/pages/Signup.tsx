@@ -18,18 +18,19 @@ import {
 } from "@mui/joy";
 
 const usernameMessage = "Please enter a valid username" as const;
+const emailMessage = "Please enter a valid email" as const;
 const passwordMessage = "Please enter a valid password" as const;
 const confirmPasswordMessage = "Password values must match" as const;
 
 type FormData = {
   username: string;
+  email: string;
   password: string;
   confirmPassword: string;
 };
 
 const Signup: FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
   const [signupError, setSignupError] = useState("");
 
   const { control, handleSubmit, watch } = useForm<FormData>();
@@ -43,12 +44,13 @@ const Signup: FC = () => {
   const onSubmit = handleSubmit(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async ({ confirmPassword, ...data }) => {
+      console.log(data);
       setLoading(true);
       dispatch(signup(data))
         .then(unwrapResult)
         .then(() => {
           setLoading(false);
-          navigate("/");
+          // navigate("/");
         })
         .catch((error) => {
           setLoading(false);
@@ -72,8 +74,7 @@ const Signup: FC = () => {
           Log in
         </Button>
       }
-      error={signupError}
-    >
+      error={signupError}>
       <Controller
         control={control}
         name={"username"}
@@ -89,6 +90,29 @@ const Signup: FC = () => {
         render={({ field, fieldState: { error } }) => (
           <FormControl error={!!error?.message}>
             <FormLabel>Username</FormLabel>
+            <Input {...field} />
+            {error && (
+              <FormHelperText color={"danger"}>{error.message}</FormHelperText>
+            )}
+          </FormControl>
+        )}
+      />
+
+      <Controller
+        control={control}
+        name={"email"}
+        rules={{
+          pattern: {
+            value:
+              /^[a-z0-9~!$%^&*_=+\-}{'?]+(\.[a-z0-9~!$%^&*_=+\-}{'?]+)*@([a-z0-9_][a-z0-9_]*(\.[a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/,
+            flags: "i",
+            message: emailMessage,
+          },
+          required: { value: true, message: emailMessage },
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <FormControl error={!!error?.message}>
+            <FormLabel>Email</FormLabel>
             <Input {...field} />
             {error && (
               <FormHelperText color={"danger"}>{error.message}</FormHelperText>
@@ -126,7 +150,7 @@ const Signup: FC = () => {
         }}
         render={({ field, fieldState: { error } }) => (
           <FormControl error={!!error?.message}>
-            <FormLabel>Password</FormLabel>
+            <FormLabel>Confirm password</FormLabel>
             <Input {...field} type={"password"} />
             {error && (
               <FormHelperText color={"danger"}>{error.message}</FormHelperText>

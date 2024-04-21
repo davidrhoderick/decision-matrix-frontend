@@ -44,7 +44,7 @@ export const login = createAsyncThunk<
     if (response.ok) {
       return response.json();
     }
-    
+
     const error = await response.json();
 
     return rejectWithValue(error);
@@ -55,15 +55,15 @@ export const login = createAsyncThunk<
 
 export const signup = createAsyncThunk<
   AuthResponse,
-  { username: string; password: string }
->("auth/signup", async ({ username, password }, { rejectWithValue }) => {
+  { username: string; email: string; password: string }
+>("auth/signup", async ({ username, email, password }, { rejectWithValue }) => {
   try {
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/signup`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
       },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ username, email, password }),
     });
 
     if (response.ok) {
@@ -133,16 +133,10 @@ export const authSlice = createSlice({
       .addCase(signup.pending, (state) => {
         state.state = "pending";
       })
-      .addCase(signup.fulfilled, (state, action) => {
-        state.accessToken = action.payload.session.id;
-        state.tokenType = action.payload.tokenType;
-        state.username = action.payload.username;
+      .addCase(signup.fulfilled, (state) => {
         state.state = "fulfilled";
       })
       .addCase(signup.rejected, (state) => {
-        state.accessToken = "";
-        state.tokenType = "";
-        state.username = "";
         state.state = "rejected";
       })
       .addCase(signout.pending, (state) => {

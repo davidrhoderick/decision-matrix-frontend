@@ -32,7 +32,11 @@ const Login: FC = () => {
   );
 
   useEffect(() => {
-    if (tokenType.length && accessToken.length && username.length) {
+    if (
+      tokenType.length &&
+      accessToken.length &&
+      username.length
+    ) {
       navigate("/");
     }
   }, [accessToken, tokenType, navigate, username]);
@@ -77,8 +81,7 @@ const Login: FC = () => {
           Sign up
         </Button>
       }
-      error={loginError}
-    >
+      error={loginError}>
       <Controller
         control={control}
         name={"username"}
