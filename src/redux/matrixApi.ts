@@ -51,9 +51,7 @@ export const matrixApi = matrixApiRaw.enhanceEndpoints({
     putMatrixById: {
       onQueryStarted: async ({ id }, { dispatch, queryFulfilled }) => {
         try {
-          const {
-            data: updateResult,
-          } = await queryFulfilled;
+          const { data: updateResult } = await queryFulfilled;
 
           dispatch(
             matrixApi.util.updateQueryData(
@@ -61,7 +59,14 @@ export const matrixApi = matrixApiRaw.enhanceEndpoints({
               undefined,
               (draftMatrices) =>
                 draftMatrices.map((matrix) =>
-                  matrix.id === id ? { name: updateResult.name, id: updateResult.id } : matrix
+                  matrix.id === id
+                    ? {
+                        name: updateResult.name,
+                        id: updateResult.id,
+                        createdAt: updateResult.createdAt,
+                        updatedAt: updateResult.updatedAt,
+                      }
+                    : matrix
                 )
             )
           );
