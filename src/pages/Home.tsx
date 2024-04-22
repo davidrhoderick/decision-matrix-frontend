@@ -118,7 +118,7 @@ const Home = () => {
           </Stack>
 
           <AccordionGroup>
-            <Accordion>
+            <Accordion sx={{ px: 0 }}>
               <AccordionSummary>
                 <Typography level={"h3"}>
                   What is a "decision matrix"?
@@ -138,8 +138,11 @@ const Home = () => {
                     Create a new matrix using the button below.
                   </ListItem>
                   <ListItem>
-                    Across the top, edit, add, or remove the choices in your
-                    decision.
+                    Edit the name of your decision at the top of this page.
+                  </ListItem>
+                  <ListItem>
+                    Across the top of the table, edit, add, or remove the
+                    choices in your decision.
                   </ListItem>
                   <ListItem>
                     Along the left axis, you can edit, add, or remove factors

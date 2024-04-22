@@ -7,7 +7,7 @@ import {
   usePutMatrixByIdMutation,
 } from "@/redux/matrixApi";
 import { RootState } from "@/redux/store";
-import { Button, Input, Stack, useTheme } from "@mui/joy";
+import { Accordion, AccordionDetails, AccordionGroup, AccordionSummary, Button, Input, List, ListItem, Stack, Typography, useTheme } from "@mui/joy";
 import { ChevronLeft, Save } from "lucide-react";
 import {
   ChangeEvent,
@@ -119,6 +119,59 @@ const Matrix = () => {
             <Save />
           </Button>
         </Stack>
+
+        <AccordionGroup sx={{ marginBottom: 3 }}>
+            <Accordion>
+              <AccordionSummary>
+                <Typography level={"h3"}>
+                  What do I do now?
+                </Typography>
+              </AccordionSummary>
+
+              <AccordionDetails>
+                <Typography>
+                  A decision matrix is a tool you can use to help you make a
+                  decision. It's similar to a pros and cons list but for more
+                  than 2 or more choices and provides known and unknown weights.
+                  Here's how it works:
+                </Typography>
+
+                <List marker={"decimal"}>
+                  <ListItem>
+                    Edit the name of your decision at the top of this page.
+                  </ListItem>
+                  <ListItem>
+                    Across the top of the table, edit, add, or remove the choices in your
+                    decision.
+                  </ListItem>
+                  <ListItem>
+                    Along the left axis, you can edit, add, or remove factors
+                  </ListItem>
+                  <ListItem>
+                    As you add factors, click (or right click) on the numbers in
+                    the grid to add (or remove) weight to each choice's factor.
+                  </ListItem>
+                  <ListItem>
+                    At the bottom of each decision is a bar chart and a
+                    comparison, giving you the "winning" choice based on the
+                    factors.
+                  </ListItem>
+                  <ListItem>
+                    Returning to a choice and editing or refining the factors
+                    and choices is a good way to continue to think about your
+                    decision.
+                  </ListItem>
+                </List>
+
+                <Typography>
+                  At the end of the day, a decision is only as sound as the time
+                  you put into it (without obsessing over it). Just like a pros
+                  and cons list, a decision matrix helps you spend time on and
+                  think about a decision before you pull the trigger.
+                </Typography>
+              </AccordionDetails>
+            </Accordion>
+          </AccordionGroup>
 
         <Table />
 
