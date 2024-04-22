@@ -184,7 +184,7 @@ const Home = () => {
             sx={{ alignSelf: "start" }}
             loading={newMatrixLoading}
           >
-            New Matrix
+            New Decision Matrix
           </Button>
 
           <Sheet sx={{ overflow: "auto", mx: -3 }}>
@@ -202,7 +202,7 @@ const Home = () => {
               <thead>
                 <tr>
                   <th>Your Decisions</th>
-                  <th style={{ width: "80px" }} />
+                  <th style={{ width: "120px" }} />
                 </tr>
               </thead>
 
