@@ -191,19 +191,20 @@ const Home = () => {
             <Table
               size="lg"
               variant={"plain"}
-              sx={{
+              sx={(theme) => ({
                 "& tr > *:first-child": {
                   position: "sticky",
                   left: 0,
                   zIndex: 1,
+                  background: theme.vars.palette.background.surface,
                 },
-              }}
+              })}
             >
               <thead>
                 <tr>
-                  <th>Your Decisions</th>
-                  <th>Created</th>
-                  <th>Updated</th>
+                  <th style={{ width: "150px" }}>Your Decisions</th>
+                  <th style={{ width: "200px" }}>Created</th>
+                  <th style={{ width: "200px" }}>Updated</th>
                   <th style={{ width: "120px" }} />
                 </tr>
               </thead>
