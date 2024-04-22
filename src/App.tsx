@@ -5,11 +5,14 @@ import store from "@/redux/store";
 
 import Home from "@/pages/Home";
 import Login from "@/pages/Login";
+import ConfirmEmail from "@/pages/ConfirmEmail";
+import EmailConfirmationExpired from "@/pages/EmailConfirmationExpired";
 import Signup from "@/pages/Signup";
+import Matrix from "@/pages/Matrix";
+
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
 import { CssBaseline, CssVarsProvider } from "@mui/joy";
-import Matrix from "@/pages/Matrix";
 import theme from "./lib/theme";
 
 // eslint-disable-next-line prefer-const
@@ -23,6 +26,14 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/confirm-email",
+    element: <ConfirmEmail />,
+  },
+  {
+    path: "/email-confirmation-expired",
+    element: <EmailConfirmationExpired />,
   },
   {
     path: "/signup",

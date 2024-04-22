@@ -45,15 +45,19 @@ const AuthForm: FC<Props> = ({
 
       {error && <Alert color={"danger"}>{error}</Alert>}
 
-      <Grid container px={1}>
-        <Grid xs={6} mr={1} ml={-1}>
-          {leftAction}
-        </Grid>
+      {(leftAction && !rightAction) || (rightAction && !leftAction) ? (
+        leftAction || rightAction
+      ) : (
+        <Grid container px={1}>
+          <Grid xs={6} mr={1} ml={-1}>
+            {leftAction}
+          </Grid>
 
-        <Grid xs={6} ml={1} mr={-1}>
-          {rightAction}
+          <Grid xs={6} ml={1} mr={-1}>
+            {rightAction}
+          </Grid>
         </Grid>
-      </Grid>
+      )}
     </Stack>
   </Stack>
 );

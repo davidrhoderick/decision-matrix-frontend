@@ -1,12 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
 import { FC, useEffect, useState } from "react";
-
-import { useDispatch, useSelector } from "react-redux";
-import { Controller, useForm } from "react-hook-form";
-import { unwrapResult } from "@reduxjs/toolkit";
-import { AppDispatch, RootState } from "@/redux/store";
-
-import { login } from "@/redux/authSlice";
 
 import {
   Button,
@@ -14,15 +6,22 @@ import {
   FormHelperText,
   FormLabel,
   Input,
+  Typography,
 } from "@mui/joy";
-import AuthForm from "../components/AuthForm";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { resendConfirmationEmail } from "@/redux/authSlice";
+import { AppDispatch, RootState } from "@/redux/store";
+import { Controller, useForm } from "react-hook-form";
+import { unwrapResult } from "@reduxjs/toolkit";
+import AuthForm from "@/components/AuthForm";
 
 type FormData = {
   username: string;
   password: string;
 };
 
-const Login: FC = () => {
+const EmailConfirmationExpired: FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const [loginError, setLoginError] = useState("");
@@ -53,11 +52,11 @@ const Login: FC = () => {
 
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
-    dispatch(login(data))
+    dispatch(resendConfirmationEmail(data))
       .then(unwrapResult)
       .then(() => {
         setLoading(false);
-        navigate("/");
+        navigate("/confirm-email");
       })
       .catch((error) => {
         setLoading(false);
@@ -71,20 +70,20 @@ const Login: FC = () => {
 
   return (
     <AuthForm
-      title={"Login"}
+      title={"Email confirmation expired"}
       onSubmit={onSubmit}
       leftAction={
         <Button type={"submit"} disabled={loading} fullWidth>
-          Log in
-        </Button>
-      }
-      rightAction={
-        <Button variant={"plain"} component={Link} to="/signup" fullWidth>
-          Sign up
+          Resend confirmation email
         </Button>
       }
       error={loginError}
     >
+      <Typography>
+        Unfortunately, your email confirmation link expired. Please log in and
+        click the button for resending the confirmation email.
+      </Typography>
+
       <Controller
         control={control}
         name={"username"}
@@ -130,4 +129,4 @@ const Login: FC = () => {
   );
 };
 
-export default Login;
+export default EmailConfirmationExpired;

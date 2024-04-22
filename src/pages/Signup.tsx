@@ -30,6 +30,7 @@ type FormData = {
 };
 
 const Signup: FC = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const [signupError, setSignupError] = useState("");
 
@@ -44,13 +45,12 @@ const Signup: FC = () => {
   const onSubmit = handleSubmit(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async ({ confirmPassword, ...data }) => {
-      console.log(data);
       setLoading(true);
       dispatch(signup(data))
         .then(unwrapResult)
         .then(() => {
           setLoading(false);
-          // navigate("/");
+          navigate("/confirm-email");
         })
         .catch((error) => {
           setLoading(false);
@@ -66,7 +66,7 @@ const Signup: FC = () => {
       onSubmit={onSubmit}
       leftAction={
         <Button type={"submit"} disabled={loading} fullWidth>
-          Submit
+          Sign up
         </Button>
       }
       rightAction={
@@ -74,7 +74,8 @@ const Signup: FC = () => {
           Log in
         </Button>
       }
-      error={signupError}>
+      error={signupError}
+    >
       <Controller
         control={control}
         name={"username"}
