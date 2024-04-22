@@ -55,6 +55,8 @@ export type DeleteMatrixByIdApiArg = {
 export type Matrices = {
   id: string;
   name: string;
+  createdAt: string;
+  updatedAt: string;
 }[];
 export type Matrix = {
   id: string;
@@ -69,6 +71,8 @@ export type Matrix = {
     matrix: number[][];
   };
   userId: string;
+  createdAt: string;
+  updatedAt: string;
 };
 export const {
   useGetIndexQuery,

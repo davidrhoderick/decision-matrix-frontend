@@ -19,27 +19,6 @@
     "/signup": {
       "post": {
         "parameters": [],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/auth.response"
-                }
-              },
-              "multipart/form-data": {
-                "schema": {
-                  "$ref": "#/components/schemas/auth.response"
-                }
-              },
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/auth.response"
-                }
-              }
-            }
-          }
-        },
         "operationId": "postSignup",
         "tags": [
           "Auth"
@@ -48,20 +27,44 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/auth.body"
+                "$ref": "#/components/schemas/signup.body"
               }
             },
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/auth.body"
+                "$ref": "#/components/schemas/signup.body"
               }
             },
             "text/plain": {
               "schema": {
-                "$ref": "#/components/schemas/auth.body"
+                "$ref": "#/components/schemas/signup.body"
               }
             }
           }
+        },
+        "responses": {
+          "200": {}
+        }
+      }
+    },
+    "/confirm-email/{id}": {
+      "get": {
+        "operationId": "getConfirm-emailById",
+        "tags": [
+          "Auth"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {}
         }
       }
     },
@@ -97,20 +100,51 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/auth.body"
+                "$ref": "#/components/schemas/login.body"
               }
             },
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/auth.body"
+                "$ref": "#/components/schemas/login.body"
               }
             },
             "text/plain": {
               "schema": {
-                "$ref": "#/components/schemas/auth.body"
+                "$ref": "#/components/schemas/login.body"
               }
             }
           }
+        }
+      }
+    },
+    "/resend-confirmation-email": {
+      "post": {
+        "parameters": [],
+        "operationId": "postResend-confirmation-email",
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/login.body"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/login.body"
+              }
+            },
+            "text/plain": {
+              "schema": {
+                "$ref": "#/components/schemas/login.body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {}
         }
       }
     },
@@ -137,11 +171,19 @@
                 },
                 "name": {
                   "type": "string"
+                },
+                "createdAt": {
+                  "type": "string"
+                },
+                "updatedAt": {
+                  "type": "string"
                 }
               },
               "required": [
                 "id",
-                "name"
+                "name",
+                "createdAt",
+                "updatedAt"
               ]
             },
             "content": {
@@ -376,13 +418,41 @@
   },
   "components": {
     "schemas": {
-      "auth.body": {
+      "signup.body": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "format": "email",
+            "default": "dummy@example.com",
+            "type": "string"
+          },
+          "username": {
+            "minLength": 3,
+            "maxLength": 31,
+            "pattern": "[a-z0-9_-]+",
+            "default": "dummy",
+            "type": "string"
+          },
+          "password": {
+            "minLength": 6,
+            "maxLength": 255,
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "username",
+          "password"
+        ]
+      },
+      "login.body": {
         "type": "object",
         "properties": {
           "username": {
             "minLength": 3,
             "maxLength": 31,
             "pattern": "[a-z0-9_-]+",
+            "default": "dummy",
             "type": "string"
           },
           "password": {
@@ -421,12 +491,12 @@
                   },
                   {
                     "format": "date",
-                    "default": "2024-04-19T10:22:45.207Z",
+                    "default": "2024-04-22T10:38:27.033Z",
                     "type": "string"
                   },
                   {
                     "format": "date-time",
-                    "default": "2024-04-19T10:22:45.207Z",
+                    "default": "2024-04-22T10:38:27.033Z",
                     "type": "string"
                   }
                 ]
@@ -459,13 +529,22 @@
             },
             "name": {
               "type": "string"
+            },
+            "createdAt": {
+              "type": "string"
+            },
+            "updatedAt": {
+              "type": "string"
             }
           },
           "required": [
             "id",
-            "name"
+            "name",
+            "createdAt",
+            "updatedAt"
           ]
-        }
+        },
+        "additionalProperties": false
       },
       "matrix": {
         "type": "object",
@@ -523,6 +602,12 @@
           },
           "userId": {
             "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
           }
         },
         "required": [
@@ -531,8 +616,11 @@
           "choices",
           "factors",
           "factorsChoices",
-          "userId"
-        ]
+          "userId",
+          "createdAt",
+          "updatedAt"
+        ],
+        "additionalProperties": false
       }
     }
   }

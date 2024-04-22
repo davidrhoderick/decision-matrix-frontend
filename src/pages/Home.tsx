@@ -202,18 +202,22 @@ const Home = () => {
               <thead>
                 <tr>
                   <th>Your Decisions</th>
+                  <th>Created</th>
+                  <th>Updated</th>
                   <th style={{ width: "120px" }} />
                 </tr>
               </thead>
 
               <tbody>
-                {data?.map(({ id, name }) => (
+                {data?.map(({ id, name, createdAt, updatedAt }) => (
                   <tr
                     key={id}
                     onClick={() => navigateToMatrix(id)}
                     style={{ cursor: "pointer" }}
                   >
                     <td>{name}</td>
+                    <td>{new Date(createdAt).toLocaleString()}</td>
+                    <td>{new Date(updatedAt).toLocaleString()}</td>
                     <td align="right">
                       <Button
                         size={"sm"}
