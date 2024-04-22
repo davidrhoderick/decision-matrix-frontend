@@ -1,10 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Controller, useForm } from "react-hook-form";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { AppDispatch } from "@/redux/store";
+import { AppDispatch, RootState } from "@/redux/store";
 
 import { signup } from "@/redux/authSlice";
 
@@ -37,6 +37,16 @@ const Signup: FC = () => {
   const { control, handleSubmit, watch } = useForm<FormData>();
 
   const [loading, setLoading] = useState(false);
+
+  const { tokenType, accessToken, username } = useSelector(
+    (state: RootState) => state.auth
+  );
+
+  useEffect(() => {
+    if (tokenType.length && accessToken.length && username.length) {
+      navigate("/");
+    }
+  }, [accessToken, tokenType, navigate, username]);
 
   watch(() => {
     setSignupError("");
