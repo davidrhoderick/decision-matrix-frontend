@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, MouseEvent, useState } from "react";
+import { ChangeEvent, FC, FocusEvent, MouseEvent, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 
@@ -16,7 +16,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/joy";
-import { ArrowDown, ArrowRight, Plus, X } from "lucide-react";
+import { ArrowDown, ArrowRight, Plus, Trash, X } from "lucide-react";
 import { useMediaQuery } from "@mui/material";
 import { usePutMatrixByIdMutation } from "@/redux/matrixApiRaw";
 
@@ -58,9 +58,17 @@ const Table: FC = () => {
   };
 
   const handleChangeChoice = (
-    event: ChangeEvent<HTMLInputElement>,
+    event: ChangeEvent<HTMLInputElement> | string,
     index: number
-  ) => dispatch(changeChoice({ name: event.target.value, index }));
+  ) => {
+    console.log("changed to", event);
+    dispatch(
+      changeChoice({
+        name: typeof event === "string" ? event : event.target.value,
+        index,
+      })
+    );
+  };
 
   const handleRemoveChoice = (index: number) => dispatch(removeChoice(index));
 
@@ -72,12 +80,12 @@ const Table: FC = () => {
   };
 
   const handleChangeFactor = (
-    event: ChangeEvent<HTMLInputElement>,
+    event: ChangeEvent<HTMLInputElement> | string,
     index: number
   ) =>
     dispatch(
       changeFactor({
-        name: event.target.value,
+        name: typeof event === "string" ? event : event.target.value,
         index,
       })
     );
@@ -86,6 +94,35 @@ const Table: FC = () => {
 
   const theme = useTheme();
   const mobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const [focusedInput, setFocusedInput] = useState<{
+    choice: number | null;
+    factor: number | null;
+  }>({ choice: null, factor: null });
+
+  const handleFocusInput = (key: "choice" | "factor", index: number) =>
+    setFocusedInput({
+      factor: key === "factor" ? index : null,
+      choice: key === "choice" ? index : null,
+    });
+
+  const handleBlurInput = (event: FocusEvent) => {
+    if (!event.relatedTarget?.getElementsByTagName("button")) {
+      setFocusedInput({ factor: null, choice: null });
+    }
+  };
+
+  const handleClickEndDecorator = (key: "choice" | "factor", index: number) => {
+    if (key === "choice") {
+      focusedInput.choice === index
+        ? handleChangeChoice("", index)
+        : handleRemoveChoice(index);
+    } else {
+      focusedInput.factor === index
+        ? handleChangeFactor("", index)
+        : handleRemoveFactor(index);
+    }
+  };
 
   return (
     <Sheet sx={{ overflow: "auto", mx: { xs: -3, md: 0 } }}>
@@ -121,15 +158,17 @@ const Table: FC = () => {
                   size={"sm"}
                   variant={"plain"}
                   value={choice}
+                  onFocus={() => handleFocusInput("choice", index)}
+                  onBlur={handleBlurInput}
                   onChange={(event) => handleChangeChoice(event, index)}
                   endDecorator={
                     choices.length > 1 && (
                       <IconButton
-                        onClick={() => handleRemoveChoice(index)}
+                        onClick={() => handleClickEndDecorator("choice", index)}
                         size={mobile ? "sm" : "md"}
                         disabled={isLoading}
                       >
-                        <X />
+                        {focusedInput.choice === index ? <X /> : <Trash />}
                       </IconButton>
                     )
                   }
@@ -163,14 +202,22 @@ const Table: FC = () => {
                   size={"sm"}
                   variant={"plain"}
                   value={factor}
+                  onFocus={() => handleFocusInput("factor", factorIndex)}
+                  onBlur={handleBlurInput}
                   onChange={(event) => handleChangeFactor(event, factorIndex)}
                   endDecorator={
                     factors.length > 1 && (
                       <IconButton
-                        onClick={() => handleRemoveFactor(factorIndex)}
+                        onClick={() =>
+                          handleClickEndDecorator("factor", factorIndex)
+                        }
                         disabled={isLoading}
                       >
-                        <X />
+                        {focusedInput.factor === factorIndex ? (
+                          <X />
+                        ) : (
+                          <Trash />
+                        )}
                       </IconButton>
                     )
                   }
