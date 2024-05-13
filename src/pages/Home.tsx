@@ -6,6 +6,7 @@ import { signout } from "@/redux/authSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import {
   Matrix,
+  matrixApi,
   useDeleteMatrixByIdMutation,
   useGetIndexQuery,
   usePostMatrixMutation,
@@ -38,7 +39,10 @@ const Home = () => {
   const handleSignout = useCallback(() => {
     dispatch(signout())
       .then(unwrapResult)
-      .then(() => navigate("/login"))
+      .then(() => {
+        navigate("/login")
+        dispatch(matrixApi.util.resetApiState())
+      })
       .catch((error: unknown) => console.error(error));
   }, [dispatch, navigate]);
 
