@@ -1,0 +1,15 @@
+{
+  "schemaFile": "./spec.json",
+  "apiFile": "./emptyApi.ts",
+  "outputFile": "./matrixApiRaw.ts",
+  "hooks": true,
+  "filterEndpoints": [
+    "getIndex",
+    "postMatrix",
+    "getMatrixById",
+    "putMatrixById",
+    "deleteMatrixById"
+  ],
+  "apiImport": "default",
+  "exportName": "matrixApiRaw"
+}
